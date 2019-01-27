@@ -1,6 +1,8 @@
-# TODO import module for vk
-# TODO import module for telegram
+from config import keys
 
+# TODO import module for vk
+
+# TODO import module for telegram
 
 # WSGI main
 def application(environ, start_response):
@@ -9,10 +11,10 @@ def application(environ, start_response):
     if method == 'POST':
         start_response('200 OK', [('Content-Type', 'application/json')])
         if path == '/vk':
-            # TODO call vk handler
+            # vk.send_message(msg = text, to = username, auth = keys['vk'])
             pass
         elif path == '/telegram':
-            # TODO call telegram handler
+            # telegram.send_message(msg = text, to = username, auth = keys['tg'])
             pass
         yield b''
     else:
