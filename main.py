@@ -1,7 +1,6 @@
 import json
-from config import keys
 from social import vk
-# TODO import module for telegram
+from social import telegram
 
 
 # WSGI main
@@ -14,11 +13,15 @@ def application(environ, start_response):
         body = environ.get("wsgi.input").read(size)
         data = json.loads(body.decode('utf-8'))
         if path == '/vk':
-            vk.parse(data)
+            result = vk.parse(data)
         elif path == '/telegram':
-            # telegram.parse(data)
-            pass
-        yield b''
+            result = telegram.parse(data)
+        else:
+            result = ''
+        if type(result) == str:
+            yield result.encode('utf-8')
+        else:
+            yield json.dumps(result).encode('utf-8')
     else:
         print(environ.get('QUERY_STRING'))
         if path == '/':
