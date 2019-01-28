@@ -1,8 +1,19 @@
 from config import keys
+import storage
+from urllib.parse import urlencode
+
+# TODO отлов ошибок в функции parse
 
 
-def send_message():
-    pass
+def send_message(uid, msg):
+    api_url = 'https://api.vk.com/method/messages.send?'
+    query = urlencode({
+        "user_id": storage.get_real_id(uid, 'vk'),
+        "message": msg,
+        "access_token": keys['vk']
+    })
+    api_url += query
+    # TODO выполнить этот запрос
 
 
 def parse(data):

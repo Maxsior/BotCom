@@ -27,7 +27,7 @@ def application(environ, start_response):
         if path == '/':
             redirect_headers = [('Location', '/pages/')]
             start_response('301 Moved Permanently', redirect_headers)
-            return [b'']
+            yield b''
         else:
             start_response('404 Not Found', [('Content-Type', 'text/plain')])
-            return [b'Page is not found!']
+            yield b'Page is not found!'
