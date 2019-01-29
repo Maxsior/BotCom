@@ -1,6 +1,7 @@
 from config import keys
 import storage
 from urllib.parse import urlencode
+from urllib.request import urlopen
 
 # TODO отлов ошибок в функции parse
 
@@ -13,7 +14,9 @@ def send_message(uid, msg):
         "access_token": keys['vk']
     })
     api_url += query
-    # TODO выполнить этот запрос
+    # TODO обработать ответ
+    with urlopen(api_url) as res:
+        print(res)
 
 
 def parse(data):
