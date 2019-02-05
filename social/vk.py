@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 # TODO отлов ошибок в функции parse
-
+# TODO переделать на Long pull
 
 def send_message(uid, msg):
     api_url = 'https://api.vk.com/method/messages.send?'

@@ -18,3 +18,9 @@ def execute(msg):
     elif msg.startswith(('/help', '/помощь')):
         pass
         # TODO обработка команды help / помощь
+    elif msg.startswith('/status'):
+        pass
+        # TODO обработка команды status
+    elif msg.startswith('/change'):
+        pass
+        # TODO обработка команды change
