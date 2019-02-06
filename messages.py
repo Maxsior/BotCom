@@ -1,11 +1,11 @@
-def execute(msg):
-    """
+import storage
 
-    :type msg: str
-    """
+
+def execute_cmd(msg_data):
+    msg = msg_data["message"]
     if msg.startswith(('/reg', '/start', '/рег', '/регистрация')):
-        pass
         # TODO обработка команды reg / start / рег
+        storage.add_user()
     elif msg.startswith(('/conn', '/chat', '/подкл', '/чат')):
         pass
         # TODO обработка команды conn / chat / подкл
@@ -24,3 +24,16 @@ def execute(msg):
     elif msg.startswith('/change'):
         pass
         # TODO обработка команды change
+
+
+def normalize(text):
+    return text
+
+
+def parse(msg_data):
+    if msg_data["message"].startsWith('/'):
+        execute_cmd(msg_data)
+    else:
+        # TODO обработка сообщения
+        msg_data['read_id']
+        pass

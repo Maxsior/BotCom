@@ -21,11 +21,13 @@ def send_message(uid, msg):
 
 
 def parse(data):
+    # TODO отлов ошибок
     data_type = data['type']
     if data_type == 'message_new':
         return {
-            'uid': data['user_id'],
-            'msg': data['body']
+            'real_id': data['user_id'],
+            'msg': data['body'],
+            'social': 'vk'
         }
     elif data_type == 'confirmation':
         if data['group_id'] == 176977577:
