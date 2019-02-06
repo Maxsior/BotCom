@@ -1,0 +1,97 @@
+{
+  "init_keyboard": {
+    "one_time": false,
+    "buttons": [
+      {
+        "action": {
+          "type": "text",
+          "payload": {
+            "command": "/reg"
+          },
+          "label": "Войти в BotCom"
+        },
+        "color": "primary"
+      }
+    ]
+  },
+  "main_keyboard": {
+    "one_time": false,
+    "buttons": [
+      {
+        "action": {
+          "type": "text",
+          "payload": {
+            "command": "/conn"
+          },
+          "label": "Подключиться"
+        },
+        "color": "positive"
+      },
+      {
+        "action": {
+          "type": "text",
+          "payload": {
+            "command": "/unreg"
+          },
+          "label": "Удалить аккаунт"
+        },
+        "color": "negative"
+      },
+      {
+        "action": {
+          "type": "text",
+          "payload": {
+            "command": "/help"
+          },
+          "label": "Помощь"
+        },
+        "color": "primary"
+      }
+    ]
+  },
+  "chat_keyboard": {
+    "one_time": false,
+    "buttons": [
+      {
+        "action": {
+          "type": "text",
+          "payload": {
+            "command": "/close"
+          },
+          "label": "Отключиться"
+        },
+        "color": "negative"
+      },
+      {
+        "action": {
+          "type": "text",
+          "payload": {
+            "command": "/change"
+          },
+          "label": "Переключиться"
+        },
+        "color": "positive"
+      },
+      {
+        "action": {
+          "type": "text",
+          "payload": {
+            "command": "/status"
+          },
+          "label": "Показать текущий статус"
+        },
+        "color": "default"
+      },
+      {
+        "action": {
+          "type": "text",
+          "payload": {
+            "command": "/help"
+          },
+          "label": "Помощь"
+        },
+        "color": "primary"
+      }
+    ]
+  }
+}
