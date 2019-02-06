@@ -3,8 +3,6 @@ import storage
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
-# TODO отлов ошибок в функции parse
-# TODO переделать на Long pull
 
 def send_message(uid, msg):
     api_url = 'https://api.vk.com/method/messages.send?'
@@ -20,11 +18,13 @@ def send_message(uid, msg):
 
 
 def parse(data):
+    # TODO отлов ошибок
     data_type = data['type']
     if data_type == 'message_new':
         return {
-            'uid': data['user_id'],
-            'msg': data['body']
+            'real_id': data['user_id'],
+            'msg': data['body'],
+            'social': 'vk'
         }
     elif data_type == 'confirmation':
         if data['group_id'] == 176977577:

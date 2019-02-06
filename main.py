@@ -1,10 +1,16 @@
 import json
+import logging
 from social import vk
 from social import telegram
+import config
+import storage
+import messages
 
 
 # WSGI main
 def application(environ, start_response):
+    config.configure_logger()
+    # TODO логировать подключения
     method = environ.get('REQUEST_METHOD')
     path = environ.get('PATH_INFO')
     if method == 'POST':
@@ -17,11 +23,12 @@ def application(environ, start_response):
         elif path == '/telegram':
             result = telegram.parse(data)
         else:
-            result = ''
+            result = 'Неизвестная сеть'
         if type(result) == str:
             yield result.encode('utf-8')
         else:
-            yield json.dumps(result).encode('utf-8')
+            messages.parse(result)
+        yield b''
     else:
         print(environ.get('QUERY_STRING'))
         if path == '/':
