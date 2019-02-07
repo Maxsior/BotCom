@@ -1,3 +1,4 @@
+import logging
 import storage
 
 
@@ -5,11 +6,12 @@ def execute_cmd(msg_data):
     msg = msg_data["message"]
     if msg.startswith(('/reg', '/start', '/рег', '/регистрация')):
         # TODO обработка команды reg / start / рег
-        storage.add_user()
+        # storage.add_user()
+        pass
     elif msg.startswith(('/conn', '/chat', '/подкл', '/чат')):
         pass
         # TODO обработка команды conn / chat / подкл
-    elif msg.startswith(('/unreg', '/del', '/delete', 'убейсяобстену')):
+    elif msg.startswith(('/unreg', '/del', '/delete')):
         pass
         # TODO обработка команды unreg / del / delete
     elif msg.startswith(('/close', '/end', '/off')):
@@ -31,6 +33,7 @@ def normalize(text):
 
 
 def parse(msg_data):
+    logging.log(msg_data['message'])
     if msg_data["message"].startsWith('/'):
         execute_cmd(msg_data)
     else:

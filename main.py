@@ -10,7 +10,6 @@ import messages
 # WSGI main
 def application(environ, start_response):
     config.configure_logger()
-    # TODO логировать подключения
     method = environ.get('REQUEST_METHOD')
     path = environ.get('PATH_INFO')
     if method == 'POST':
@@ -19,10 +18,13 @@ def application(environ, start_response):
         body = environ.get("wsgi.input").read(size)
         data = json.loads(body.decode('utf-8'))
         if path == '/vk':
+            logging.info('запрос от бота ВКонтакте')
             result = vk.parse(data)
         elif path == '/telegram':
+            logging.info('запрос от бота Телеграм')
             result = telegram.parse(data)
         else:
+            logging.warning('неизвестный запрос')
             result = 'Неизвестная сеть'
         if type(result) == str:
             yield result.encode('utf-8')

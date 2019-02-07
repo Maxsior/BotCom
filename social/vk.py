@@ -1,8 +1,9 @@
-from config import keys
-import storage
+import json
 from urllib.parse import urlencode
 from urllib.request import urlopen
-import json
+from config import keys
+import storage
+
 
 
 def send_message(uid, msg):

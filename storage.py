@@ -1,5 +1,6 @@
-from config import db_info
 import MySQLdb
+import logging
+from config import db_info
 
 db = None
 cursor = None
@@ -38,3 +39,4 @@ def add_user(real_id, social):
         uid = '_new_uid_'
         cursor.execute(f"INSERT INTO uids (uid, {social}) VALUES ('{uid}', '{real_id}')")
         db.commit()
+        logging.info('зарегистрирован новый пользователь')
