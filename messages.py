@@ -29,11 +29,12 @@ def execute_cmd(msg_data):
 
 
 def normalize(text):
+    # TODO нужна ли нормализация?
     return text
 
 
 def parse(msg_data):
-    logging.log(msg_data['message'])
+    logging.debug(msg_data['message'])
     if msg_data["message"].startsWith('/'):
         execute_cmd(msg_data)
     else:

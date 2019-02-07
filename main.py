@@ -3,7 +3,6 @@ import logging
 from social import vk
 from social import telegram
 import config
-import storage
 import messages
 
 

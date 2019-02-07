@@ -1,0 +1,45 @@
+{
+  "one_time": false,
+  "buttons": [
+    {
+      "action": {
+        "type": "text",
+        "payload": {
+          "command": "/close"
+        },
+        "label": "Отключиться"
+      },
+      "color": "negative"
+    },
+    {
+      "action": {
+        "type": "text",
+        "payload": {
+          "command": "/change"
+        },
+        "label": "Переключиться"
+      },
+      "color": "positive"
+    },
+    {
+      "action": {
+        "type": "text",
+        "payload": {
+          "command": "/status"
+        },
+        "label": "Показать текущий статус"
+      },
+      "color": "default"
+    },
+    {
+      "action": {
+        "type": "text",
+        "payload": {
+          "command": "/help"
+        },
+        "label": "Помощь"
+      },
+      "color": "primary"
+    }
+  ]
+}

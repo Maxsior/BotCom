@@ -5,9 +5,8 @@ from config import keys
 import storage
 
 
-
 def send_message(uid, msg):
-    with open("vk_keyboards.json") as f:
+    with open("vk_main_keyboard.json") as f:
         keyboards = json.load(f)
     api_url = 'https://api.vk.com/method/messages.send?'
     query = urlencode({

@@ -1,0 +1,15 @@
+{
+  "one_time": false,
+  "buttons": [
+    {
+      "action": {
+        "type": "text",
+        "payload": {
+          "command": "/reg"
+        },
+        "label": "Войти в BotCom"
+      },
+      "color": "primary"
+    }
+  ]
+}
