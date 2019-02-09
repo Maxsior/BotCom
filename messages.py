@@ -1,6 +1,6 @@
 import logging
 import storage
-
+from social import vk, telegram
 
 def execute_cmd(msg_data):
     msg = msg_data["message"]
@@ -38,6 +38,18 @@ def parse(msg_data):
     if msg_data["message"].startsWith('/'):
         execute_cmd(msg_data)
     else:
-        # TODO обработка сообщения
-        msg_data['read_id']
-        pass
+        id_from = storage.get_id(msg_data['read_id'], msg_data['social'])
+        id_to = storage.get_cur_con(id_from)
+        if id_from != storage.get_cur_con(id_to):
+            storage.add_msg(id_from, id_to, msg_data['msg'])
+        else:
+            if msg_data['social'] == 'vk':
+                vk.send_message(
+                        storage.get_uid(msg_data['read_id'],
+                                        msg_data['social'])
+                )
+            elif msg_data['social'] == 'telegram':
+                telegram.send_message(
+                        storage.get_uid(msg_data['read_id'],
+                                        msg_data['social'])
+                )

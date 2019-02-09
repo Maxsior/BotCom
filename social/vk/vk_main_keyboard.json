@@ -1,0 +1,35 @@
+{
+  "one_time": false,
+  "buttons": [
+    {
+      "action": {
+        "type": "text",
+        "payload": {
+          "command": "/conn"
+        },
+        "label": "Подключиться"
+      },
+      "color": "positive"
+    },
+    {
+      "action": {
+        "type": "text",
+        "payload": {
+          "command": "/unreg"
+        },
+        "label": "Удалить аккаунт"
+      },
+      "color": "negative"
+    },
+    {
+      "action": {
+        "type": "text",
+        "payload": {
+          "command": "/help"
+        },
+        "label": "Помощь"
+      },
+      "color": "primary"
+    }
+  ]
+}

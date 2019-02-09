@@ -14,19 +14,19 @@ def _init():
         cursor = db.cursor()
 
 
-def get_real_id(uid):
+def get_real_id(id_):
     _init()
-    cursor.execute(f"SELECT real_id, social FROM uids WHERE uid = '{uid}'")
+    cursor.execute(f"SELECT real_id, social FROM uids WHERE id = {id_}")
     return cursor.fetchone()
 
 
-def get_uid(real_id, social):
+def get_uid(id_):
     _init()
-    cursor.execute(
-        "SELECT uid FROM uids WHERE real_id = '{}' and social = '{}'"
-        .format(real_id, social)
-    )
-    return cursor.fetchone()[0]
+    cursor.execute(f"SELECT uid FROM uids WHERE id = {id_}")
+    if cursor.rowcount == 0:
+        return None
+    else:
+        return cursor.fetchone()[0]
 
 
 def user_exists(id_, social=None):
@@ -36,13 +36,39 @@ def user_exists(id_, social=None):
             "SELECT COUNT(*) FROM uids WHERE uid = '{}'"
             .format(id_)
         )
-        return bool(cursor.fetchone()[0])
     else:
         cursor.execute(
             "SELECT COUNT(*) FROM uids WHERE real_id = '{}' and social = '{}'"
             .format(id_, social)
         )
-        return bool(cursor.fetchone()[0])
+    return bool(cursor.fetchone()[0])
+
+
+def get_id(id_, social=None):
+    _init()
+    if social is None:
+        cursor.execute(f"SELECT id FROM uids WHERE uid = '{id_}'")
+    else:
+        cursor.execute(
+            "SELECT id FROM uids WHERE real_id = '{}' and social = '{}'"
+            .format(id_, social)
+        )
+    return cursor.fetchone()[0]
+
+
+def get_cur_con(id_):
+    _init()
+    cursor.execute(f"SELECT current FROM uids WHERE id = {id_}")
+    return cursor.fetchone()[0]
+
+
+def add_msg(id_from, id_to, msg):
+    _init()
+    cursor.execute(
+        "INSERT INTO msgs (id_from, id_to, text) values ({}, {}, '{}')"
+        .format(id_from, id_to, msg)
+    )
+    db.commit()
 
 
 def add_user(real_id, social):
@@ -71,4 +97,4 @@ def update_uid(real_id, social):
         )
         db.commit()
         logging.info('зарегистрирован новый пользователь')
-        logging.debug(f"имя новго пользователя = {uid}")
+        logging.debug(f"имя нового пользователя = {uid}")
