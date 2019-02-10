@@ -1,6 +1,8 @@
 import logging
 import storage
 from social import vk, telegram
+import strings
+
 
 def execute_cmd(msg_data):
     msg = msg_data["message"]
@@ -23,9 +25,6 @@ def execute_cmd(msg_data):
     elif msg.startswith('/status'):
         pass
         # TODO обработка команды status
-    elif msg.startswith('/change'):
-        pass
-        # TODO обработка команды change
 
 
 def normalize(text):
@@ -33,23 +32,25 @@ def normalize(text):
     return text
 
 
-def parse(msg_data):
-    logging.debug(msg_data['message'])
-    if msg_data["message"].startsWith('/'):
+def send(id_to, msg):
+    real_id, social = storage.get_real_id(id_to)
+    if social == 'vk':
+        vk.send_message(real_id, msg)
+    elif social == 'telegram':
+        telegram.send_message(real_id, msg)
+
+
+def forward(msg_data):
+    logging.debug(msg_data['msg'])
+    if msg_data["msg"].startswith('/'):
         execute_cmd(msg_data)
     else:
-        id_from = storage.get_id(msg_data['read_id'], msg_data['social'])
+        id_from = storage.get_id(msg_data['real_id'], msg_data['social'])
         id_to = storage.get_cur_con(id_from)
-        if id_from != storage.get_cur_con(id_to):
-            storage.add_msg(id_from, id_to, msg_data['msg'])
+        if id_to is None:
+            send(id_from, strings.NO_RECIPIENT)
         else:
-            if msg_data['social'] == 'vk':
-                vk.send_message(
-                        storage.get_uid(msg_data['read_id'],
-                                        msg_data['social'])
-                )
-            elif msg_data['social'] == 'telegram':
-                telegram.send_message(
-                        storage.get_uid(msg_data['read_id'],
-                                        msg_data['social'])
-                )
+            if id_from != storage.get_cur_con(id_to):
+                storage.add_msg(id_from, id_to, msg_data['msg'])
+            else:
+                send(id_to, msg_data['msg'])

@@ -5,7 +5,8 @@
       "action": {
         "type": "text",
         "payload": {
-          "command": "/conn"
+          "command": "/conn",
+          "params": ["{uid}"]
         },
         "label": "Подключиться"
       },

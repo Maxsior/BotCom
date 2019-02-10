@@ -58,33 +58,41 @@ def get_id(id_, social=None):
 
 def get_cur_con(id_):
     _init()
+    if id_ is None:
+        return None
     cursor.execute(f"SELECT current FROM uids WHERE id = {id_}")
     return cursor.fetchone()[0]
 
 
 def add_msg(id_from, id_to, msg):
+    if id_to is None:
+        return False
+
     _init()
     cursor.execute(
         "INSERT INTO msgs (id_from, id_to, text) values ({}, {}, '{}')"
         .format(id_from, id_to, msg)
     )
     db.commit()
+    return True
 
 
 def add_user(real_id, social):
     _init()
-    if not user_exists(real_id, social):
-        uid = utils.generate_uid()
-        cursor.execute(
-            "INSERT INTO uids (uid, real_id, social) VALUES ('{}', '{}', '{}')"
-            .format(uid, real_id, social)
-        )
-        db.commit()
-        logging.info('зарегистрирован новый пользователь')
-        logging.debug(f"имя нового пользователя = {uid}")
-        return True
-    else:
+
+    if user_exists(real_id, social):
+        logging.debug(f"пользователь уже существует -- ({real_id}, {social})")
         return False
+
+    uid = utils.generate_uid()
+    cursor.execute(
+        "INSERT INTO uids (uid, real_id, social) VALUES ('{}', '{}', '{}')"
+        .format(uid, real_id, social)
+    )
+    db.commit()
+    logging.info('зарегистрирован новый пользователь')
+    logging.debug(f"имя нового пользователя = {uid}")
+    return True
 
 
 def update_uid(real_id, social):

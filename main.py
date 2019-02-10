@@ -28,7 +28,7 @@ def application(environ, start_response):
         if type(result) == str:
             yield result.encode('utf-8')
         else:
-            messages.parse(result)
+            messages.forward(result)
         yield b''
     else:
         print(environ.get('QUERY_STRING'))

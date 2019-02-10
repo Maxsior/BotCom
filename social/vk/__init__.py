@@ -1,23 +1,27 @@
+import os.path
 import json
+import random
 from urllib.parse import urlencode
 from urllib.request import urlopen
 from config import keys
-import storage
 
 
-def send_message(id_, msg):
-    with open("vk_main_keyboard.json") as f:
-        keyboards = json.load(f)
+
+def send_message(real_id, msg):
+    # TODO настроить клавиатуры
+    os.path.join(os.path.dirname(__file__), 'vk_main_keyboard.json')
     api_url = 'https://api.vk.com/method/messages.send?'
     query = urlencode({
-        "user_id": storage.get_real_id(id_),
+        "user_id": real_id,
         "message": msg,
-        "access_token": keys['vk']
+        "access_token": keys['vk'],
+        "random_id": random.randint(0, 2**32),
+        "v": 5.92
     })
     api_url += query
     # TODO обработать ответ
     with urlopen(api_url) as res:
-        print(res)
+        print(json.loads(res.read().decode('utf-8')))
 
 
 def parse(data):
