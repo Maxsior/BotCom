@@ -6,7 +6,6 @@ from urllib.request import urlopen
 from config import keys
 
 
-
 def send_message(real_id, msg):
     # TODO настроить клавиатуры
     os.path.join(os.path.dirname(__file__), 'vk_main_keyboard.json')
@@ -35,6 +34,6 @@ def parse(data):
         }
     elif data_type == 'confirmation':
         if data['group_id'] == 176977577:
-            return '894adea0'
+            return keys['vk_confirmation']
         else:
             return ''
