@@ -1,5 +1,4 @@
 import os.path
-import json
 import random
 from urllib.parse import urlencode
 from urllib.request import urlopen
@@ -20,20 +19,19 @@ def send_message(real_id, msg):
     api_url += query
     # TODO обработать ответ
     with urlopen(api_url) as res:
-        print(json.loads(res.read().decode('utf-8')))
+        print(res.read().decode('utf-8'))
 
 
 def parse(data):
-    # TODO отлов ошибок
     data_type = data['type']
     if data_type == 'message_new':
+        msg = data['object']
         return {
-            'real_id': data['user_id'],
-            'msg': data['body'],
+            'real_id': msg['user_id'],
+            'msg': msg['body'],
             'social': 'vk'
         }
-    elif data_type == 'confirmation':
-        if data['group_id'] == 176977577:
-            return keys['vk_confirmation']
-        else:
-            return ''
+    elif data_type == 'confirmation' and data.get('group_id') == 176977577:
+        return keys['vk_confirmation']
+    else:
+        return ''

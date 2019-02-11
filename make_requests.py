@@ -33,7 +33,9 @@ def post(data, network_name, port=8080):
 # post({"type": "confirmation", "group_id": 176977577}, 'vk')
 post({
     "type": "message_new",
-    "user_id": 119981612,
-    "body": "hello bot"
+    "object": {
+        "user_id": 1,
+        "body": "hello bot"
+    }
 }, 'vk')
 # get('/numbers/?one=1&two=2&three=3')
