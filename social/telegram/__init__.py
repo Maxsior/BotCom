@@ -2,9 +2,11 @@ from config import keys
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
+NAME = 'telegram'
+
 
 def send_message(real_id, msg):
-    api_url = f"https://api.telegram.org/bot{keys['telegram']}/sendMessage?"
+    api_url = f"https://api.telegram.org/bot{keys[NAME]}/sendMessage?"
     query = urlencode({
         "chat_id": real_id,
         "text": msg
@@ -22,7 +24,7 @@ def parse(data):
         return {
             'real_id': msg['from']['id'],
             'msg': msg['text'],
-            'social': 'telegram'
+            'social': NAME
         }
     else:
         return ''

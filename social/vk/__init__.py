@@ -4,6 +4,8 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 from config import keys
 
+NAME = 'vk'
+
 
 def send_message(real_id, msg):
     # TODO настроить клавиатуры
@@ -12,7 +14,7 @@ def send_message(real_id, msg):
     query = urlencode({
         "user_id": real_id,
         "message": msg,
-        "access_token": keys['vk'],
+        "access_token": keys[NAME],
         "random_id": random.randint(0, 2**32),
         "v": 5.92
     })
@@ -27,9 +29,9 @@ def parse(data):
     if data_type == 'message_new':
         msg = data['object']
         return {
-            'real_id': msg['user_id'],
-            'msg': msg['body'],
-            'social': 'vk'
+            'real_id': msg['from_id'],
+            'msg': msg['text'],
+            'social': NAME
         }
     elif data_type == 'confirmation' and data.get('group_id') == 176977577:
         return keys['vk_confirmation']

@@ -16,10 +16,10 @@ def application(environ, start_response):
         size = int(environ.get("CONTENT_LENGTH"))
         body = environ.get("wsgi.input").read(size)
         data = json.loads(body.decode('utf-8'))
-        if path == '/vk':
+        if path == '/' + vk.NAME:
             logging.info('запрос от бота ВКонтакте')
             result = vk.parse(data)
-        elif path == '/telegram':
+        elif path == '/' + telegram.NAME:
             logging.info('запрос от бота Телеграм')
             result = telegram.parse(data)
         else:
@@ -29,7 +29,7 @@ def application(environ, start_response):
             yield result.encode('utf-8')
         else:
             messages.forward(result)
-        yield b''
+        yield b'ok'
     else:
         print(environ.get('QUERY_STRING'))
         if path == '/':

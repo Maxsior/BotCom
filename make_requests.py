@@ -30,12 +30,10 @@ def post(data, network_name, port=8080):
 
 
 # Пример описания тестовых запросов
-# post({"type": "confirmation", "group_id": 176977577}, 'vk')
 post({
-    "type": "message_new",
-    "object": {
-        "user_id": 1,
-        "body": "hello bot"
+    'type': 'message_new',
+    'object': {
+        'from_id': 119981612,
+        'text': 'я написал /conn ВЕРШИНА48'
     }
 }, 'vk')
-# get('/numbers/?one=1&two=2&three=3')
