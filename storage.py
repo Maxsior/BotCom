@@ -8,7 +8,7 @@ db = None
 cursor = None
 
 
-class _StableDictCursor(MySQLdb.cursors.Cursor):
+class _StableCursor(MySQLdb.cursors.Cursor):
     def execute(self, query, args=None):
         try:
             super().execute(query, args)
@@ -22,7 +22,7 @@ def _init(force=False):
     global db, cursor
     if force or db is None:
         db = MySQLdb.connect(**db_info)
-        cursor = db.cursor(_StableDictCursor)
+        cursor = db.cursor(_StableCursor)
 
 
 def get_id(id_, social=None):
