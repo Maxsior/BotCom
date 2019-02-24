@@ -1,31 +1,36 @@
 import logging
 import storage
 from social import vk, telegram
+import utils
 import strings
 
 
 def execute_cmd(msg_data):
     # TODO обработка команд
     msg = msg_data["msg"]
+    id_from = storage.get_id(msg_data['real_id'], msg_data['social'])
     if msg.startswith(('/reg', '/start', '/рег', '/регистрация')):
-        id_ = storage.get_id(msg_data['real_id'], msg_data['social'])
         uid = storage.update_uid(msg_data['real_id'], msg_data['social'])
-        send(id_, strings.NEW_UID.format(uid=uid))
+        send(id_from, strings.NEW_UID.format(uid=uid))
     elif msg.startswith(('/conn', '/chat', '/подкл', '/чат')):
-        id_from = storage.get_id(msg_data['real_id'], msg_data['social'])
         uid = msg.split()[1].upper()  # получаем аргумент команды
         id_to = storage.get_id(uid)
-        storage.set_current(id_from, id_to)
+        if id_to is not None:
+            storage.set_current(id_from, id_to)
+            send(id_from, strings.CONNECTED.format(uid=uid))
+        else:
+            send(id_from, strings.INVALID_UID)
     elif msg.startswith(('/unreg', '/del', '/delete')):
-        id_ = storage.get_id(msg_data['real_id'], msg_data['social'])
-        storage.delete_user(id_)
+        storage.delete_user(id_from)
     elif msg.startswith(('/close', '/end', '/off')):
-        id_ = storage.get_id(msg_data['real_id'], msg_data['social'])
-        storage.set_current(id_, None)
+        storage.set_current(id_from, None)
     elif msg.startswith(('/help', '/помощь')):
-        pass
+        send(id_from, strings.HELP)
     elif msg.startswith('/status'):
-        pass
+        send(id_from, strings.STATUS.format(
+            uid=storage.get_uid(id_from),
+            current=storage.get_cur_con(id_from)
+        ))
 
 
 def send(id_to, msg):
@@ -36,17 +41,21 @@ def send(id_to, msg):
         telegram.send_message(real_id, msg)
 
 
-# TODO issue: SQL injection
 def forward(msg_data):
     logging.debug(msg_data['msg'])
 
-    if type(msg_data['real_id']) != int:
+    # TODO warn: Не во всех соц. сетях идентификатор -- число
+    if not utils.check_id(msg_data['real_id']):
         raise ValueError('Недопустимый id - ' + msg_data['real_id'])
 
     if not storage.user_exists(msg_data['real_id'], msg_data['social']):
         id_from = storage.add_user(msg_data['real_id'], msg_data['social'])
         uid = storage.get_uid(id_from)
+        send(id_from, strings.HELP)
         send(id_from, strings.NEW_UID.format(uid=uid))
+
+        if msg_data["msg"].startswith('/reg'):
+            return
     else:
         id_from = storage.get_id(msg_data['real_id'], msg_data['social'])
 

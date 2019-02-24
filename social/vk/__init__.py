@@ -29,7 +29,7 @@ def parse(data):
     if data_type == 'message_new':
         msg = data['object']
         return {
-            'real_id': msg['from_id'],
+            'real_id': str(msg['from_id']),
             'msg': msg['text'],
             'social': NAME
         }
