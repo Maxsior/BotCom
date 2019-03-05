@@ -22,7 +22,7 @@ def parse(data):
     if 'message' in data:
         msg = data['message']
         return {
-            'real_id': msg['from']['id'],
+            'real_id': str(msg['from']['id']),
             'msg': msg['text'],
             'social': NAME
         }

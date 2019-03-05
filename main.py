@@ -31,7 +31,6 @@ def application(environ, start_response):
             messages.forward(result)
         yield b'ok'
     else:
-        print(environ.get('QUERY_STRING'))
         if path == '/':
             redirect_headers = [('Location', '/pages/')]
             start_response('301 Moved Permanently', redirect_headers)
