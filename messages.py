@@ -44,7 +44,6 @@ def send(id_to, msg):
 def forward(msg_data):
     logging.debug(msg_data['msg'])
 
-    # TODO warn: Не во всех соц. сетях идентификатор -- число
     if not utils.check_id(msg_data['real_id']):
         raise ValueError('Недопустимый id - ' + msg_data['real_id'])
 
@@ -69,4 +68,17 @@ def forward(msg_data):
             if id_from != storage.get_cur_con(id_to):
                 storage.add_msg(id_from, id_to, msg_data['msg'])
             else:
-                send(id_to, msg_data['msg'])
+                if msg_data['social'] == vk.NAME:
+                    full_msg = strings.MSG.format(
+                        name=vk.get_name(id_from),
+                        msg=msg_data['msg']
+                    )
+                elif msg_data['social'] == telegram.NAME:
+                    full_msg = strings.MSG.format(
+                        name=telegram.get_name(id_from),
+                        msg=msg_data['msg']
+                    )
+                else:
+                    # TODO несуществующая соцсеть?
+                    full_msg = msg_data['msg']
+                send(id_to, full_msg)

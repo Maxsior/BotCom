@@ -28,3 +28,6 @@ NEW_UID = """Вам присвоен новый UID -- {uid}"""
 CONNECTED = """Соединено с {uid}!"""
 
 INVALID_UID = """Введённого UID не существует!"""
+
+MSG = """{name}:
+{msg}"""

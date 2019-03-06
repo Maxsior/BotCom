@@ -1,5 +1,6 @@
 import os.path
 import random
+import json
 from urllib.parse import urlencode
 from urllib.request import urlopen
 from config import keys
@@ -37,3 +38,16 @@ def parse(data):
         return keys['vk_confirmation']
     else:
         return ''
+
+
+def get_name(real_id):
+    api_url = 'https://api.vk.com/method/users.get?'
+    query = urlencode({
+        "user_ids": real_id,
+        "access_token": keys[NAME],
+        "v": 5.92
+    })
+    api_url += query
+    with urlopen(api_url) as res:
+        result = json.loads(res.read().decode('utf-8'))["response"][0]
+    return result["first_name"] + " " + result["second_name"]
