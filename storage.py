@@ -81,12 +81,13 @@ def get_msgs(id_from, id_to):
         .format(id_from, id_to)
     )
 
-    msgs = map(lambda msg: msg[0], cursor.fetchall())
+    msgs = tuple(map(lambda msg: msg[0], cursor.fetchall()))
 
     cursor.execute(
         "DELETE FROM msgs WHERE id_from = '{}' and id_to = '{}'"
         .format(id_from, id_to)
     )
+    db.commit()
 
     return msgs
 
