@@ -75,6 +75,22 @@ def user_exists(id_, social=None):
     return bool(cursor.fetchone()[0])
 
 
+def get_msgs(id_from, id_to):
+    cursor.execute(
+        "SELECT text FROM msgs WHERE id_from = '{}' and id_to = '{}'"
+        .format(id_from, id_to)
+    )
+
+    msgs = map(lambda msg: msg[0], cursor.fetchall())
+
+    cursor.execute(
+        "DELETE FROM msgs WHERE id_from = '{}' and id_to = '{}'"
+        .format(id_from, id_to)
+    )
+
+    return msgs
+
+
 def add_msg(id_from, id_to, msg):
     if id_to is None:
         return False
@@ -106,7 +122,7 @@ def add_user(real_id, social):
 def set_current(id_from, id_to):
     cursor.execute(
         "UPDATE uids SET current = {} WHERE id = {}"
-        .format(id_to, id_from)
+        .format(id_to or 'NULL', id_from)
     )
     db.commit()
 

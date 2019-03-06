@@ -12,10 +12,7 @@ def send_message(real_id, msg):
         "text": msg
     })
     api_url += query
-
-    # TODO обработать ответ
-    with urlopen(api_url) as res:
-        print(res.read().decode('utf-8'))
+    urlopen(api_url)
 
 
 def parse(data):

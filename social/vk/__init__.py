@@ -20,9 +20,7 @@ def send_message(real_id, msg):
         "v": 5.92
     })
     api_url += query
-    # TODO обработать ответ
-    with urlopen(api_url) as res:
-        print(res.read().decode('utf-8'))
+    urlopen(api_url)
 
 
 def parse(data):
@@ -50,4 +48,4 @@ def get_name(real_id):
     api_url += query
     with urlopen(api_url) as res:
         result = json.loads(res.read().decode('utf-8'))["response"][0]
-    return result["first_name"] + " " + result["second_name"]
+    return result["first_name"] + " " + result["last_name"]

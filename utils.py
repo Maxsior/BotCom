@@ -8,11 +8,6 @@ def generate_uid():
     return f"{word}{num}"
 
 
-def normalize(text):
-    # TODO нужна ли нормализация?
-    return text
-
-
 def generate_word():
     while True:
         storage.cursor.execute("SELECT MAX(id) FROM words")
@@ -24,7 +19,7 @@ def generate_word():
 
 
 def check_id(id_):
-    """Проверяет не ли идентификатор запрещённые подстроки"""
+    """Проверяет не содержит ли идентификатор запрещённые подстроки"""
     id_ = id_.lower()
     return (
         ' ' not in id_ and

@@ -29,7 +29,7 @@ def application(environ, start_response):
             yield result.encode('utf-8')
         else:
             messages.forward(result)
-        yield b'ok'
+            yield b'ok'
     else:
         if path == '/':
             redirect_headers = [('Location', '/pages/')]
