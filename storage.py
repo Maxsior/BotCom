@@ -3,6 +3,7 @@ import MySQLdb.cursors
 import logging
 from config import db_info
 import utils
+from social import vk, telegram
 
 db = None
 cursor = None
@@ -23,6 +24,24 @@ def _init(force=False):
     if force or db is None:
         db = MySQLdb.connect(**db_info)
         cursor = db.cursor(_StableCursor)
+
+
+def get_name(id_, social=None):
+    if social is None:
+        cursor.execute(f"SELECT name FROM uids WHERE uid = '{id_}'")
+    else:
+        cursor.execute(
+            "SELECT name FROM uids WHERE real_id = '{}' and social = '{}'"
+            .format(id_, social)
+        )
+
+    result = cursor.fetchone()
+    if result is not None:
+        return result[0]
+    elif social is not None:
+        return 'Пользователь из {}'.format(social)
+    else:
+        return None
 
 
 def get_id(id_, social=None):
@@ -110,9 +129,16 @@ def add_user(real_id, social):
         return None
 
     uid = utils.generate_uid()
+    name = ''
+    if social == vk.NAME:
+        name = vk.get_name(real_id)
+    elif social == telegram.NAME:
+        # TODO получение имени юзера из Telegram
+        name = 'имя пользователя Telegram'
     cursor.execute(
-        "INSERT INTO uids (uid, real_id, social) VALUES ('{}', '{}', '{}')"
-        .format(uid, real_id, social)
+        "INSERT INTO uids (uid, real_id, social, name)"
+        "VALUES ('{}', '{}', '{}', '{}')"
+        .format(uid, real_id, social, name)
     )
     db.commit()
     logging.info('зарегистрирован новый пользователь')

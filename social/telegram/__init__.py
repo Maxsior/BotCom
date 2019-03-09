@@ -25,7 +25,3 @@ def parse(data):
         }
     else:
         return ''
-
-
-def get_name(real_id):
-    return 'Telegram'

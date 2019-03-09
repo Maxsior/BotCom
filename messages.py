@@ -6,15 +6,9 @@ import strings
 
 
 def _sign_msg(real_id, social, msg):
-    if social == vk.NAME:
-        msg = strings.MSG.format(
-            name=vk.get_name(real_id),
-            msg=msg
-        )
-    elif social == telegram.NAME:
-        msg = strings.MSG.format(
-            name=telegram.get_name(real_id),
-            msg=msg
+    msg = strings.MSG.format(
+        name=storage.get_name(real_id, social),
+        msg=msg
         )
     return msg
 
