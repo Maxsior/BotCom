@@ -5,9 +5,12 @@ import utils
 import strings
 
 
-def _sign_msg(real_id, social, msg):
+def _sign_msg(real_id, social, msg, name=None):
+    if name is None:
+        name = storage.get_name(real_id, social)
+
     msg = strings.MSG.format(
-        name=storage.get_name(real_id, social),
+        name=name,
         msg=msg
     )
     return msg
