@@ -13,7 +13,7 @@ class _StableCursor(MySQLdb.cursors.Cursor):
     def execute(self, query, args=None):
         try:
             super().execute(query, args)
-        except (AttributeError, MySQLdb.OperationalError):
+        except MySQLdb.OperationalError:
             _init(True)
             cursor.execute(query, args)
         return self
@@ -28,29 +28,29 @@ def _init(force=False):
 
 def get_name(id_, social=None):
     if social is None:
-        cursor.execute(f"SELECT name FROM uids WHERE uid = '{id_}'")
+        cursor.execute("SELECT name FROM uids WHERE uid = %s", (id_,))
     else:
         cursor.execute(
-            "SELECT name FROM uids WHERE real_id = '{}' and social = '{}'"
-            .format(id_, social)
+            "SELECT name FROM uids WHERE real_id = %s and social = %s",
+            (id_, social)
         )
 
     result = cursor.fetchone()
     if result is not None:
         return result[0]
     elif social is not None:
-        return 'Пользователь из {}'.format(social)
+        return f'Пользователь из {social}'
     else:
         return None
 
 
 def get_id(id_, social=None):
     if social is None:
-        cursor.execute(f"SELECT id FROM uids WHERE uid = '{id_}'")
+        cursor.execute("SELECT id FROM uids WHERE uid = %s", (id_,))
     else:
         cursor.execute(
-            "SELECT id FROM uids WHERE real_id = '{}' and social = '{}'"
-            .format(id_, social)
+            "SELECT id FROM uids WHERE real_id = %s and social = %s",
+            (id_, social)
         )
 
     result = cursor.fetchone()
@@ -61,12 +61,12 @@ def get_id(id_, social=None):
 
 
 def get_real_id(id_):
-    cursor.execute(f"SELECT real_id, social FROM uids WHERE id = {id_}")
+    cursor.execute("SELECT real_id, social FROM uids WHERE id = %s", (id_,))
     return cursor.fetchone()
 
 
 def get_uid(id_):
-    cursor.execute(f"SELECT uid FROM uids WHERE id = {id_}")
+    cursor.execute("SELECT uid FROM uids WHERE id = %s", (id_,))
     if cursor.rowcount == 0:
         return None
     else:
@@ -76,35 +76,35 @@ def get_uid(id_):
 def get_cur_con(id_):
     if id_ is None:
         return None
-    cursor.execute(f"SELECT current FROM uids WHERE id = {id_}")
+    cursor.execute("SELECT current FROM uids WHERE id = %s", (id_,))
     return cursor.fetchone()[0]
 
 
 def user_exists(id_, social=None):
     if social is None:
         cursor.execute(
-            "SELECT COUNT(*) FROM uids WHERE uid = '{}'"
-            .format(id_)
+            "SELECT COUNT(*) FROM uids WHERE uid = %s",
+            (id_,)
         )
     else:
         cursor.execute(
-            "SELECT COUNT(*) FROM uids WHERE real_id = '{}' and social = '{}'"
-            .format(id_, social)
+            "SELECT COUNT(*) FROM uids WHERE real_id = %s and social = %s",
+            (id_, social)
         )
     return bool(cursor.fetchone()[0])
 
 
 def get_msgs(id_from, id_to):
     cursor.execute(
-        "SELECT text FROM msgs WHERE id_from = '{}' and id_to = '{}'"
-        .format(id_from, id_to)
+        "SELECT text FROM msgs WHERE id_from = %s and id_to = %s",
+        (id_from, id_to)
     )
 
     msgs = tuple(map(lambda msg: msg[0], cursor.fetchall()))
 
     cursor.execute(
-        "DELETE FROM msgs WHERE id_from = '{}' and id_to = '{}'"
-        .format(id_from, id_to)
+        "DELETE FROM msgs WHERE id_from = %s and id_to = %s",
+        (id_from, id_to)
     )
     db.commit()
 
@@ -116,8 +116,8 @@ def add_msg(id_from, id_to, msg):
         return False
 
     cursor.execute(
-        "INSERT INTO msgs (id_from, id_to, text) values ({}, {}, '{}')"
-        .format(id_from, id_to, msg)
+        "INSERT INTO msgs (id_from, id_to, text) values (%s, %s, %s)",
+        (id_from, id_to, msg)
     )
     db.commit()
     return True
@@ -138,8 +138,8 @@ def add_user(real_id, social, name=None):
 
     cursor.execute(
         "INSERT INTO uids (uid, real_id, social, name)"
-        "VALUES ('{}', '{}', '{}', '{}')"
-        .format(uid, real_id, social, name)
+        "VALUES (%s, %s, %s, %s)",
+        (uid, real_id, social, name)
     )
     db.commit()
     logging.info('зарегистрирован новый пользователь')
@@ -149,8 +149,8 @@ def add_user(real_id, social, name=None):
 
 def set_current(id_from, id_to):
     cursor.execute(
-        "UPDATE uids SET current = {} WHERE id = {}"
-        .format(id_to or 'NULL', id_from)
+        "UPDATE uids SET current = %s WHERE id = %s",
+        (id_to or 'NULL', id_from)
     )
     db.commit()
 
@@ -159,15 +159,15 @@ def update_uid(real_id, social):
     if user_exists(real_id, social):
         uid = utils.generate_uid()
         cursor.execute(
-            "UPDATE uids SET uid = '{}' WHERE real_id = '{}' and social = '{}'"
-            .format(uid, real_id, social)
+            "UPDATE uids SET uid = %s WHERE real_id = %s and social = %s",
+            (uid, real_id, social)
         )
         db.commit()
         return uid
 
 
 def delete_user(id_):
-    cursor.execute(f"DELETE FROM uids WHERE id = {id_}")
+    cursor.execute("DELETE FROM uids WHERE id = %s", (id_,))
     db.commit()
 
 

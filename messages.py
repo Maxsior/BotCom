@@ -61,7 +61,11 @@ def execute_cmd(msg_data):
         send(id_from, strings.HELP)
 
     elif msg.startswith('/status'):
-        conn_uid = storage.get_uid(storage.get_cur_con(id_from))
+        conn_id = storage.get_cur_con(id_from)
+        if conn_id is not None:
+            conn_uid = storage.get_uid(conn_id)
+        else:
+            conn_uid = 'Нет собеседника'
         uid_from = storage.get_uid(id_from)
         send(id_from, strings.STATUS.format(
             uid=uid_from,
@@ -80,8 +84,8 @@ def send(id_to, msg):
 def forward(msg_data):
     logging.debug(msg_data['msg'])
 
-    if not utils.check_id(msg_data['real_id']):
-        raise ValueError('Недопустимый id - ' + msg_data['real_id'])
+    # if not utils.check_id(msg_data['real_id']):
+    #     raise ValueError('Недопустимый id - ' + msg_data['real_id'])
 
     if not storage.user_exists(msg_data['real_id'], msg_data['social']):
         id_from = storage.add_user(msg_data['real_id'],
