@@ -57,6 +57,7 @@ CREATE TABLE `uids` (
   `current` int(11) DEFAULT NULL,
   `real_id` varchar(30) NOT NULL,
   `social` varchar(10) NOT NULL,
+  `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uid` (`uid`),
   UNIQUE KEY `vk` (`real_id`),

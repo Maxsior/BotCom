@@ -3,7 +3,7 @@ import MySQLdb.cursors
 import logging
 from config import db_info
 import utils
-from social import vk, telegram
+from social import vk
 
 db = None
 cursor = None
@@ -123,18 +123,19 @@ def add_msg(id_from, id_to, msg):
     return True
 
 
-def add_user(real_id, social):
+def add_user(real_id, social, name=None):
     if user_exists(real_id, social):
         logging.debug(f"пользователь уже существует -- ({real_id}, {social})")
         return None
 
     uid = utils.generate_uid()
-    name = ''
-    if social == vk.NAME:
-        name = vk.get_name(real_id)
-    elif social == telegram.NAME:
-        # TODO получение имени юзера из Telegram
-        name = 'имя пользователя Telegram'
+
+    if name is None:
+        if social == vk.NAME:
+            name = vk.get_name(real_id)
+        else:
+            name = 'Неизвестный пользователь'
+
     cursor.execute(
         "INSERT INTO uids (uid, real_id, social, name)"
         "VALUES ('{}', '{}', '{}', '{}')"

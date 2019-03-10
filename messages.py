@@ -9,7 +9,7 @@ def _sign_msg(real_id, social, msg):
     msg = strings.MSG.format(
         name=storage.get_name(real_id, social),
         msg=msg
-        )
+    )
     return msg
 
 
@@ -81,7 +81,9 @@ def forward(msg_data):
         raise ValueError('Недопустимый id - ' + msg_data['real_id'])
 
     if not storage.user_exists(msg_data['real_id'], msg_data['social']):
-        id_from = storage.add_user(msg_data['real_id'], msg_data['social'])
+        id_from = storage.add_user(msg_data['real_id'],
+                                   msg_data['social'],
+                                   msg_data.get('name'))
         uid = storage.get_uid(id_from)
         send(id_from, strings.HELP)
         send(id_from, strings.NEW_UID.format(uid=uid))

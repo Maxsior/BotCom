@@ -18,9 +18,11 @@ def send_message(real_id, msg):
 def parse(data):
     if 'message' in data:
         msg = data['message']
+        name = f"{msg['from']['first_name']} {msg['from']['first_name']}"
         return {
             'real_id': str(msg['from']['id']),
             'msg': msg['text'],
+            'name': name,
             'social': NAME
         }
     else:
