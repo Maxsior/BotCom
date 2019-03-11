@@ -21,6 +21,7 @@ def _cmd_connect(id_from, uid_to):
     if id_to is not None:
         storage.set_current(id_from, id_to)
         uid_from = storage.get_uid(id_from)
+        name = storage.get_name(id_from)
 
         msgs = storage.get_msgs(id_to, id_from)
         if len(msgs) > 0:
@@ -30,11 +31,12 @@ def _cmd_connect(id_from, uid_to):
                 send(id_from, msg)
 
         if storage.get_cur_con(id_to) == id_from:
-            send(id_from, strings.CONNECTED.format(uid=uid_to))
-            send(id_to, strings.CONNECTED.format(uid=uid_from))
+            send(id_from, strings.CONNECTED.format(uid=uid_to, name=name))
+            send(id_to, strings.CONNECTED.format(uid=uid_from, name=name))
         else:
             send(id_from, strings.CONN_WAIT.format(uid=uid_to))
-            send(id_to, strings.CONN_NOTIFICATION.format(uid=uid_from))
+            send(id_to, strings.CONN_NOTIFICATION.format(uid=uid_from,
+                                                         name=name))
     else:
         send(id_from, strings.INVALID_UID)
 
@@ -51,25 +53,35 @@ def execute_cmd(msg_data):
         uid_to = msg.split()[1].upper()  # получаем аргумент команды
         _cmd_connect(id_from, uid_to)
 
-    elif msg.startswith(('/unreg', '/del', '/delete')):
+    elif msg.startswith(('/unreg', '/del', '/delete', '/выйти')):
         storage.delete_user(id_from)
 
-    elif msg.startswith(('/close', '/end', '/off')):
+    elif msg.startswith(('/close', '/end', '/off', '/откл')):
         storage.set_current(id_from, None)
 
     elif msg.startswith(('/help', '/помощь')):
-        send(id_from, strings.HELP)
+        send(id_from, strings.FULL_HELP)
 
-    elif msg.startswith('/status'):
+    elif msg.startswith(('/status', '/статус')):
+        others = storage.get_others(id_from)
         conn_id = storage.get_cur_con(id_from)
         if conn_id is not None:
             conn_uid = storage.get_uid(conn_id)
+            name = storage.get_name(conn_id)
         else:
             conn_uid = 'Нет собеседника'
+            name = ''
+        if len(others) == 0:
+            others_s = '(Отсутствуют)'
+        else:
+            others_s = ', '.join(map(lambda user: f"{user[0]} ({user[1]})",
+                                 others))
         uid_from = storage.get_uid(id_from)
         send(id_from, strings.STATUS.format(
             uid=uid_from,
-            current=conn_uid
+            current=conn_uid,
+            others=others_s,
+            name=name
         ))
 
 

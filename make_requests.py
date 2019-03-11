@@ -33,7 +33,7 @@ def post(data, network_name, port=8080):
 post({
     'type': 'message_new',
     'object': {
-        'from_id': "",
-        'text': ''
+        'from_id': 188482059,
+        'text': '/status'
     }
 }, 'vk')

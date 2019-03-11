@@ -5,18 +5,22 @@ from config import db_info
 import utils
 from social import vk
 
-db = None
-cursor = None
-
 
 class _StableCursor(MySQLdb.cursors.Cursor):
     def execute(self, query, args=None):
         try:
             super().execute(query, args)
-        except MySQLdb.OperationalError:
+        except MySQLdb.OperationalError as e:
+            if e[0] != 2006:
+                raise e
+
             _init(True)
             cursor.execute(query, args)
         return self
+
+
+db: MySQLdb.Connection = None
+cursor: _StableCursor = None
 
 
 def _init(force=False):
@@ -26,20 +30,11 @@ def _init(force=False):
         cursor = db.cursor(_StableCursor)
 
 
-def get_name(id_, social=None):
-    if social is None:
-        cursor.execute("SELECT name FROM uids WHERE uid = %s", (id_,))
-    else:
-        cursor.execute(
-            "SELECT name FROM uids WHERE real_id = %s and social = %s",
-            (id_, social)
-        )
-
+def get_name(id_):
+    cursor.execute("SELECT name FROM uids WHERE id = %s", (id_,))
     result = cursor.fetchone()
     if result is not None:
         return result[0]
-    elif social is not None:
-        return f'Пользователь из {social}'
     else:
         return None
 
@@ -111,6 +106,13 @@ def get_msgs(id_from, id_to):
     return msgs
 
 
+def get_others(id_to):
+    if id_to is None:
+        return ()
+    cursor.execute("SELECT name, uid FROM uids WHERE current = %s", (id_to,))
+    return cursor.fetchall()
+
+
 def add_msg(id_from, id_to, msg):
     if id_to is None:
         return False
@@ -150,7 +152,7 @@ def add_user(real_id, social, name=None):
 def set_current(id_from, id_to):
     cursor.execute(
         "UPDATE uids SET current = %s WHERE id = %s",
-        (id_to or 'NULL', id_from)
+        (id_to, id_from)
     )
     db.commit()
 
