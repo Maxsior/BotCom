@@ -1,19 +1,7 @@
 import logging
 import storage
 from social import vk, telegram
-import utils
 import strings
-
-
-def _sign_msg(real_id, social, msg, name=None):
-    if name is None:
-        name = storage.get_name(real_id, social)
-
-    msg = strings.MSG.format(
-        name=name,
-        msg=msg
-    )
-    return msg
 
 
 def _cmd_connect(id_from, uid_to):
@@ -21,22 +9,22 @@ def _cmd_connect(id_from, uid_to):
     if id_to is not None:
         storage.set_current(id_from, id_to)
         uid_from = storage.get_uid(id_from)
-        name = storage.get_name(id_from)
+        name_from = storage.get_name(id_from)
+        name_to = storage.get_name(id_to)
 
         msgs = storage.get_msgs(id_to, id_from)
         if len(msgs) > 0:
-            real_id, social = storage.get_real_id(id_to)
             for msg in msgs:
-                msg = _sign_msg(real_id, social, msg)
+                msg = strings.MSG.format(name=name_from, msg=msg)
                 send(id_from, msg)
 
         if storage.get_cur_con(id_to) == id_from:
-            send(id_from, strings.CONNECTED.format(uid=uid_to, name=name))
-            send(id_to, strings.CONNECTED.format(uid=uid_from, name=name))
+            send(id_from, strings.CONNECTED.format(uid=uid_to, name=name_to))
+            send(id_to, strings.CONNECTED.format(uid=uid_from, name=name_from))
         else:
             send(id_from, strings.CONN_WAIT.format(uid=uid_to))
             send(id_to, strings.CONN_NOTIFICATION.format(uid=uid_from,
-                                                         name=name))
+                                                         name=name_from))
     else:
         send(id_from, strings.INVALID_UID)
 
@@ -50,13 +38,17 @@ def execute_cmd(msg_data):
         send(id_from, strings.NEW_UID.format(uid=uid))
 
     elif msg.startswith(('/conn', '/chat', '/подкл', '/чат')):
+        #TODO подключение по внутреннему идентификатору соц.сети
+        # /conn 1234567890 vk
         uid_to = msg.split()[1].upper()  # получаем аргумент команды
         _cmd_connect(id_from, uid_to)
 
     elif msg.startswith(('/unreg', '/del', '/delete', '/выйти')):
+        # TODO уведомление об удалении
         storage.delete_user(id_from)
 
     elif msg.startswith(('/close', '/end', '/off', '/откл')):
+        #TODO уведомление об отключении
         storage.set_current(id_from, None)
 
     elif msg.startswith(('/help', '/помощь')):
@@ -122,5 +114,9 @@ def forward(msg_data):
             if id_from != storage.get_cur_con(id_to):
                 storage.add_msg(id_from, id_to, msg_data['msg'])
             else:
-                full_msg = _sign_msg(**msg_data)
-                send(id_to, full_msg)
+                name = msg_data.get('name') or storage.get_name(id_from)
+                msg = strings.MSG.format(
+                    name=name,
+                    msg=msg_data['msg']
+                )
+                send(id_to, msg)

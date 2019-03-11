@@ -11,7 +11,7 @@ class _StableCursor(MySQLdb.cursors.Cursor):
         try:
             super().execute(query, args)
         except MySQLdb.OperationalError as e:
-            if e[0] != 2006:
+            if e.args[0] != 2006:
                 raise e
 
             _init(True)
