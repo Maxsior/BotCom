@@ -34,6 +34,6 @@ post({
     'type': 'message_new',
     'object': {
         'from_id': 188482059,
-        'text': '/status'
+        'text': '/unreg'
     }
 }, 'vk')

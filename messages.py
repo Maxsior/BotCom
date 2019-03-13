@@ -38,18 +38,34 @@ def execute_cmd(msg_data):
         send(id_from, strings.NEW_UID.format(uid=uid))
 
     elif msg.startswith(('/conn', '/chat', '/подкл', '/чат')):
-        #TODO подключение по внутреннему идентификатору соц.сети
-        # /conn 1234567890 vk
-        uid_to = msg.split()[1].upper()  # получаем аргумент команды
-        _cmd_connect(id_from, uid_to)
+        # TODO поддержка id-доменов
+        args = msg.split()
+        size = len(args)
+        if size == 1:
+            send(id_from, strings.CONN_NO_PARAMS)
+        elif size == 2:
+            uid_to = args[1].upper()  # получаем аргумент команды
+            _cmd_connect(id_from, uid_to)
+        else:
+            real_id_to = args[1].upper()
+            social = args[2].lower()
+
+            if social in (vk.NAME, telegram.NAME):
+                uid_to = storage.get_uid(storage.get_id(real_id_to, social))
+                if uid_to is None:
+                    send(id_from, strings.INVALID_USER)
+                else:
+                    _cmd_connect(id_from, uid_to)
+            else:
+                send(id_from, strings.NO_SOCIAL)
 
     elif msg.startswith(('/unreg', '/del', '/delete', '/выйти')):
-        # TODO уведомление об удалении
+        send(id_from, strings.BYE.format(social=msg_data['social']))
         storage.delete_user(id_from)
 
     elif msg.startswith(('/close', '/end', '/off', '/откл')):
-        #TODO уведомление об отключении
         storage.set_current(id_from, None)
+        send(id_from, strings.OFF)
 
     elif msg.startswith(('/help', '/помощь')):
         send(id_from, strings.FULL_HELP)
