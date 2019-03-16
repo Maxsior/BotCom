@@ -1,8 +1,4 @@
 -- MySQL dump 10.13  Distrib 5.7.23, for Linux (x86_64)
---
--- Host: botcom.mysql.pythonanywhere-services.com    Database: botcom$users
--- ------------------------------------------------------
--- Server version 5.7.21-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -58,6 +54,7 @@ CREATE TABLE `uids` (
   `real_id` varchar(30) NOT NULL,
   `social` varchar(10) NOT NULL,
   `name` varchar(50) NOT NULL,
+  `nick` varchar(30),
   PRIMARY KEY (`id`),
   UNIQUE KEY `uid` (`uid`),
   UNIQUE KEY `vk` (`real_id`),

@@ -15,7 +15,7 @@ def _cmd_connect(id_from, uid_to):
         msgs = storage.get_msgs(id_to, id_from)
         if len(msgs) > 0:
             for msg in msgs:
-                msg = strings.MSG.format(name=name_from, msg=msg)
+                msg = strings.MSG.format(name=name_to, msg=msg)
                 send(id_from, msg)
 
         if storage.get_cur_con(id_to) == id_from:
@@ -91,6 +91,8 @@ def execute_cmd(msg_data):
             others=others_s,
             name=name
         ))
+    else:
+        send(id_from, strings.UNDEFINED_CMD)
 
 
 def send(id_to, msg):
@@ -110,7 +112,8 @@ def forward(msg_data):
     if not storage.user_exists(msg_data['real_id'], msg_data['social']):
         id_from = storage.add_user(msg_data['real_id'],
                                    msg_data['social'],
-                                   msg_data.get('name'))
+                                   msg_data['name'],
+                                   msg_data['nick'])
         uid = storage.get_uid(id_from)
         send(id_from, strings.HELP)
         send(id_from, strings.NEW_UID.format(uid=uid))

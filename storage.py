@@ -11,7 +11,7 @@ class _StableCursor(MySQLdb.cursors.Cursor):
         try:
             super().execute(query, args)
         except MySQLdb.OperationalError as e:
-            if e.args[0] != 2006:
+            if e.args[0] not in (2006, 2013):
                 raise e
 
             _init(True)
@@ -125,23 +125,17 @@ def add_msg(id_from, id_to, msg):
     return True
 
 
-def add_user(real_id, social, name=None):
+def add_user(real_id, social, name, nick):
     if user_exists(real_id, social):
         logging.debug(f"пользователь уже существует -- ({real_id}, {social})")
         return None
 
     uid = utils.generate_uid()
 
-    if name is None:
-        if social == vk.NAME:
-            name = vk.get_name(real_id)
-        else:
-            name = 'Неизвестный пользователь'
-
     cursor.execute(
-        "INSERT INTO uids (uid, real_id, social, name)"
-        "VALUES (%s, %s, %s, %s)",
-        (uid, real_id, social, name)
+        "INSERT INTO uids (uid, real_id, social, name, nick)"
+        "VALUES (%s, %s, %s, %s, %s)",
+        (uid, real_id, social, name, nick)
     )
     db.commit()
     logging.info('зарегистрирован новый пользователь')

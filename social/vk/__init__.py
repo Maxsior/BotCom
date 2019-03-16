@@ -27,9 +27,12 @@ def parse(data):
     data_type = data['type']
     if data_type == 'message_new':
         msg = data['object']
+        name, nick = _get_info(msg['from_id'])
         return {
             'real_id': str(msg['from_id']),
             'msg': msg['text'],
+            'name': name,
+            'nick': nick,
             'social': NAME
         }
     elif data_type == 'confirmation' and data.get('group_id') == 176977577:
@@ -38,14 +41,15 @@ def parse(data):
         return ''
 
 
-def get_name(real_id):
+def _get_info(real_id):
     api_url = 'https://api.vk.com/method/users.get?'
     query = urlencode({
         "user_ids": real_id,
+        "fields": "domain",
         "access_token": keys[NAME],
         "v": 5.92
     })
     api_url += query
     with urlopen(api_url) as res:
         result = json.loads(res.read().decode('utf-8'))["response"][0]
-    return result["first_name"] + " " + result["last_name"]
+    return result["first_name"] + " " + result["last_name"], result["domain"]

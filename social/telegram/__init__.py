@@ -8,8 +8,8 @@ NAME = 'telegram'
 def send_message(real_id, msg):
     api_url = f"https://api.telegram.org/bot{keys[NAME]}/sendMessage?"
     query = urlencode({
-        "chat_id": real_id,
-        "text": msg
+        'chat_id': real_id,
+        'text': msg
     })
     api_url += query
     urlopen(api_url)
@@ -23,6 +23,7 @@ def parse(data):
             'real_id': str(msg['from']['id']),
             'msg': msg['text'],
             'name': name,
+            'nick': msg['from']['username'],
             'social': NAME
         }
     else:
