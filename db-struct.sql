@@ -55,6 +55,7 @@ CREATE TABLE `uids` (
   `social` varchar(10) NOT NULL,
   `name` varchar(50) NOT NULL,
   `nick` varchar(30),
+  `wait_args` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uid` (`uid`),
   UNIQUE KEY `vk` (`real_id`),

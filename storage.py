@@ -3,7 +3,6 @@ import MySQLdb.cursors
 import logging
 from config import db_info
 import utils
-from social import vk
 
 
 class _StableCursor(MySQLdb.cursors.Cursor):
@@ -30,6 +29,86 @@ def _init(force=False):
         cursor = db.cursor(_StableCursor)
 
 
+def add_msg(id_from, id_to, msg):
+    if id_to is None:
+        return False
+
+    cursor.execute(
+        "INSERT INTO msgs (id_from, id_to, text) values (%s, %s, %s)",
+        (id_from, id_to, msg)
+    )
+    db.commit()
+    return True
+
+
+def add_user(real_id, social, name, nick):
+    if user_exists(real_id, social):
+        logging.debug(f"пользователь уже существует -- ({real_id}, {social})")
+        return None
+
+    uid = utils.generate_uid()
+
+    cursor.execute(
+        "INSERT INTO uids (uid, real_id, social, name, nick)"
+        "VALUES (%s, %s, %s, %s, %s)",
+        (uid, real_id, social, name, nick.lower())
+    )
+    db.commit()
+    logging.info('зарегистрирован новый пользователь')
+    logging.debug(f"имя нового пользователя = {uid}")
+    return cursor.lastrowid
+
+
+def set_current(id_from, id_to):
+    cursor.execute(
+        "UPDATE uids SET current = %s WHERE id = %s",
+        (id_to, id_from)
+    )
+    db.commit()
+
+
+def wait(id_, waiting):
+    uid = utils.generate_uid()
+    cursor.execute(
+        "UPDATE uids SET wait_args = %s WHERE id = %s",
+        (int(waiting), id_)
+    )
+    db.commit()
+
+
+def update_uid(real_id, social):
+    if user_exists(real_id, social):
+        uid = utils.generate_uid()
+        cursor.execute(
+            "UPDATE uids SET uid = %s WHERE real_id = %s and social = %s",
+            (uid, real_id, social)
+        )
+        db.commit()
+        return uid
+
+
+def user_exists(id_, social=None):
+    if social is None:
+        cursor.execute(
+            "SELECT COUNT(*) FROM uids WHERE uid = %s",
+            (id_,)
+        )
+    else:
+        cursor.execute(
+            "SELECT COUNT(*) FROM uids WHERE real_id = %s and social = %s",
+            (id_, social)
+        )
+    return bool(cursor.fetchone()[0])
+
+
+def is_waiting(id_):
+    cursor.execute(
+        "SELECT wait_args FROM uids WHERE id = %s",
+        (id_,)
+    )
+    return bool(cursor.fetchone()[0])
+
+
 def get_name(id_):
     cursor.execute("SELECT name FROM uids WHERE id = %s", (id_,))
     result = cursor.fetchone()
@@ -39,12 +118,13 @@ def get_name(id_):
         return None
 
 
-def get_id(id_, social=None):
+def get_id(id_, social=None, by_nick=False):
     if social is None:
         cursor.execute("SELECT id FROM uids WHERE uid = %s", (id_,))
     else:
         cursor.execute(
-            "SELECT id FROM uids WHERE real_id = %s and social = %s",
+            "SELECT id FROM uids WHERE {key} = %s and social = %s"
+            .format(key=('real_id', 'nick')[by_nick]),
             (id_, social)
         )
 
@@ -75,20 +155,6 @@ def get_cur_con(id_):
     return cursor.fetchone()[0]
 
 
-def user_exists(id_, social=None):
-    if social is None:
-        cursor.execute(
-            "SELECT COUNT(*) FROM uids WHERE uid = %s",
-            (id_,)
-        )
-    else:
-        cursor.execute(
-            "SELECT COUNT(*) FROM uids WHERE real_id = %s and social = %s",
-            (id_, social)
-        )
-    return bool(cursor.fetchone()[0])
-
-
 def get_msgs(id_from, id_to):
     cursor.execute(
         "SELECT text FROM msgs WHERE id_from = %s and id_to = %s",
@@ -111,55 +177,6 @@ def get_others(id_to):
         return ()
     cursor.execute("SELECT name, uid FROM uids WHERE current = %s", (id_to,))
     return cursor.fetchall()
-
-
-def add_msg(id_from, id_to, msg):
-    if id_to is None:
-        return False
-
-    cursor.execute(
-        "INSERT INTO msgs (id_from, id_to, text) values (%s, %s, %s)",
-        (id_from, id_to, msg)
-    )
-    db.commit()
-    return True
-
-
-def add_user(real_id, social, name, nick):
-    if user_exists(real_id, social):
-        logging.debug(f"пользователь уже существует -- ({real_id}, {social})")
-        return None
-
-    uid = utils.generate_uid()
-
-    cursor.execute(
-        "INSERT INTO uids (uid, real_id, social, name, nick)"
-        "VALUES (%s, %s, %s, %s, %s)",
-        (uid, real_id, social, name, nick)
-    )
-    db.commit()
-    logging.info('зарегистрирован новый пользователь')
-    logging.debug(f"имя нового пользователя = {uid}")
-    return cursor.lastrowid
-
-
-def set_current(id_from, id_to):
-    cursor.execute(
-        "UPDATE uids SET current = %s WHERE id = %s",
-        (id_to, id_from)
-    )
-    db.commit()
-
-
-def update_uid(real_id, social):
-    if user_exists(real_id, social):
-        uid = utils.generate_uid()
-        cursor.execute(
-            "UPDATE uids SET uid = %s WHERE real_id = %s and social = %s",
-            (uid, real_id, social)
-        )
-        db.commit()
-        return uid
 
 
 def delete_user(id_):

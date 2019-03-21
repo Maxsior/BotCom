@@ -37,21 +37,28 @@ def execute_cmd(msg_data):
         uid = storage.update_uid(msg_data['real_id'], msg_data['social'])
         send(id_from, strings.NEW_UID.format(uid=uid))
 
-    elif msg.startswith(('/conn', '/chat', '/подкл', '/чат')):
-        # TODO поддержка id-доменов
+    elif msg.startswith(('/conn', '/chat', '/подкл', '/подключиться', '/чат')):
         args = msg.split()
         size = len(args)
         if size == 1:
-            send(id_from, strings.CONN_NO_PARAMS)
+            storage.wait(id_from, True)
+            send(id_from, strings.WAIT_FOR_PARAMS)
         elif size == 2:
+            storage.wait(id_from, False)
             uid_to = args[1].upper()  # получаем аргумент команды
             _cmd_connect(id_from, uid_to)
         else:
+            storage.wait(id_from, False)
+
             real_id_to = args[1].upper()
             social = args[2].lower()
 
             if social in (vk.NAME, telegram.NAME):
-                uid_to = storage.get_uid(storage.get_id(real_id_to, social))
+                uid_to = storage.get_uid(
+                    storage.get_id(real_id_to, social) or
+                    storage.get_id(real_id_to, social, by_nick=True)
+                )
+
                 if uid_to is None:
                     send(id_from, strings.INVALID_USER)
                 else:
@@ -59,16 +66,19 @@ def execute_cmd(msg_data):
             else:
                 send(id_from, strings.NO_SOCIAL)
 
-    elif msg.startswith(('/unreg', '/del', '/delete', '/выйти')):
-        send(id_from, strings.BYE.format(social=msg_data['social']))
+    elif msg.startswith(('/unreg', '/del', '/delete', '/удалить_аккаунт')):
+        send(id_from,
+             strings.BYE.format(social=msg_data['social']),
+             keyboard='reset')
         storage.delete_user(id_from)
 
-    elif msg.startswith(('/close', '/end', '/off', '/откл')):
+    elif msg.startswith(('/close', '/off', '/отключиться')):
         storage.set_current(id_from, None)
         send(id_from, strings.OFF)
 
     elif msg.startswith(('/help', '/помощь')):
-        send(id_from, strings.FULL_HELP)
+        for part in strings.FULL_HELP.split('<--->'):
+            send(id_from, part)
 
     elif msg.startswith(('/status', '/статус')):
         others = storage.get_others(id_from)
@@ -82,8 +92,7 @@ def execute_cmd(msg_data):
         if len(others) == 0:
             others_s = '(Отсутствуют)'
         else:
-            others_s = ', '.join(map(lambda user: f"{user[0]} ({user[1]})",
-                                 others))
+            others_s = ', '.join(map(lambda u: f"{u[0]} ({u[1]})", others))
         uid_from = storage.get_uid(id_from)
         send(id_from, strings.STATUS.format(
             uid=uid_from,
@@ -95,35 +104,34 @@ def execute_cmd(msg_data):
         send(id_from, strings.UNDEFINED_CMD)
 
 
-def send(id_to, msg):
+def send(id_to, msg, **kwargs):
     real_id, social = storage.get_real_id(id_to)
     if social == vk.NAME:
-        vk.send_message(real_id, msg)
+        vk.send_message(real_id, msg, **kwargs)
     elif social == telegram.NAME:
-        telegram.send_message(real_id, msg)
+        telegram.send_message(real_id, msg, **kwargs)
 
 
 def forward(msg_data):
     logging.debug(msg_data['msg'])
 
-    # if not utils.check_id(msg_data['real_id']):
-    #     raise ValueError('Недопустимый id - ' + msg_data['real_id'])
-
     if not storage.user_exists(msg_data['real_id'], msg_data['social']):
-        id_from = storage.add_user(msg_data['real_id'],
-                                   msg_data['social'],
-                                   msg_data['name'],
-                                   msg_data['nick'])
+        id_from = storage.add_user(msg_data['real_id'], msg_data['social'],
+                                   msg_data['name'], msg_data['nick'])
         uid = storage.get_uid(id_from)
         send(id_from, strings.HELP)
-        send(id_from, strings.NEW_UID.format(uid=uid))
+        send(id_from, strings.NEW_UID.format(uid=uid), keyboard='main')
 
-        if msg_data["msg"].startswith('/reg'):
+        if msg_data["msg"].startswith(('/reg', '/start', '/рег',
+                                       '/регистрация')):
             return
     else:
         id_from = storage.get_id(msg_data['real_id'], msg_data['social'])
 
-    if msg_data["msg"].startswith('/'):
+        if storage.is_waiting(id_from):
+            msg_data['msg'] = '/conn ' + msg_data['msg']
+
+    if msg_data['msg'].startswith('/'):
         execute_cmd(msg_data)
     else:
         id_to = storage.get_cur_con(id_from)

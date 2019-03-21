@@ -5,13 +5,17 @@ from urllib.request import urlopen
 NAME = 'telegram'
 
 
-def send_message(real_id, msg):
+def send_message(real_id, msg, **kwargs):
     api_url = f"https://api.telegram.org/bot{keys[NAME]}/sendMessage?"
-    query = urlencode({
+    query = {
         'chat_id': real_id,
         'text': msg
-    })
-    api_url += query
+    }
+    if 'keyboard' in kwargs:
+        keyboard = f"./social/telegram/{kwargs['keyboard']}_keyboard.json"
+        with open(keyboard, encoding='utf-8') as f:
+            query['reply_markup'] = f.read()
+    api_url += urlencode(query)
     urlopen(api_url)
 
 

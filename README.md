@@ -10,7 +10,6 @@
 ![Схема взаимодействия](https://s8.hostingkartinok.com/uploads/images/2019/01/f0f8ffc8bf0b9a39872866f00011ff85.png)
 
 ### Участники: 
-* [Ананьев Александр](https://github.com/RobinZone3) 
 * [Ошев Кирилл](https://github.com/kirillheroes)
 * [Кудрявцев Максим](https://github.com/Maxsior)
-
+* [Ананьев Александр](https://github.com/RobinZone3)

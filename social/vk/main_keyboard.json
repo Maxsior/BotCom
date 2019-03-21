@@ -1,0 +1,59 @@
+{
+  "one_time": false,
+  "buttons": [
+    [
+      {
+        "action": {
+          "type": "text",
+          "payload": "\"/conn\"",
+          "label": "Подключиться"
+        },
+        "color": "positive"
+      },
+      {
+        "action": {
+          "type": "text",
+          "payload": "\"/reg\"",
+          "label": "Обновить UID"
+        },
+        "color": "primary"
+      }
+    ],
+    [
+      {
+        "action": {
+          "type": "text",
+          "payload": "\"/status\"",
+          "label": "Статус"
+        },
+        "color": "default"
+      },
+      {
+        "action": {
+          "type": "text",
+          "payload": "\"/help\"",
+          "label": "Справка"
+        },
+        "color": "default"
+      }
+    ],
+    [
+      {
+        "action": {
+          "type": "text",
+          "payload": "\"/close\"",
+          "label": "Закрыть даилог"
+        },
+        "color": "negative"
+      },
+      {
+        "action": {
+          "type": "text",
+          "payload": "\"/unreg\"",
+          "label": "Удалить аккаунт"
+        },
+        "color": "negative"
+      }
+    ]
+  ]
+}

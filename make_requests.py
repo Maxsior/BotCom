@@ -30,10 +30,14 @@ def post(data, network_name, port=8080):
 
 
 # Пример описания тестовых запросов
-post({
-    'type': 'message_new',
-    'object': {
-        'from_id': 188482059,
-        'text': '/unreg'
-    }
-}, 'vk')
+while True:
+    inp = input('Сообщение: ')
+    if inp == '':
+        break
+    post({
+        'type': 'message_new',
+        'object': {
+            'from_id': 119981612,
+            'text': inp
+        }
+    }, 'vk')
