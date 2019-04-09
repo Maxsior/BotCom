@@ -68,7 +68,6 @@ def set_current(id_from, id_to):
 
 
 def wait(id_, waiting):
-    uid = utils.generate_uid()
     cursor.execute(
         "UPDATE uids SET wait_args = %s WHERE id = %s",
         (int(waiting), id_)

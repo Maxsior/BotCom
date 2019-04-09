@@ -16,7 +16,7 @@ def send_message(real_id, msg, **kwargs):
         with open(keyboard, encoding='utf-8') as f:
             query['reply_markup'] = f.read()
     api_url += urlencode(query)
-    urlopen(api_url)
+    return urlopen(api_url)
 
 
 def parse(data):

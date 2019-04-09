@@ -31,8 +31,8 @@ def parse(data):
     if data_type == 'message_new':
         msg = data['object']
 
-        if msg.get('payload'):
-            msg['text'] = json.loads(msg['payload'])
+        if 'payload' in msg:
+            msg['text'] = str(json.loads(msg['payload']))
 
         name, nick = _get_info(msg['from_id'])
         return {

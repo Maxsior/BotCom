@@ -42,7 +42,7 @@
         "action": {
           "type": "text",
           "payload": "\"/close\"",
-          "label": "Закрыть даилог"
+          "label": "Закрыть диалог"
         },
         "color": "negative"
       },

@@ -1,4 +1,3 @@
-import logging
 import storage
 from social import vk, telegram
 import strings
@@ -12,12 +11,6 @@ def _cmd_connect(id_from, uid_to):
         name_from = storage.get_name(id_from)
         name_to = storage.get_name(id_to)
 
-        msgs = storage.get_msgs(id_to, id_from)
-        if len(msgs) > 0:
-            for msg in msgs:
-                msg = strings.MSG.format(name=name_to, msg=msg)
-                send(id_from, msg)
-
         if storage.get_cur_con(id_to) == id_from:
             send(id_from, strings.CONNECTED.format(uid=uid_to, name=name_to))
             send(id_to, strings.CONNECTED.format(uid=uid_from, name=name_from))
@@ -25,6 +18,12 @@ def _cmd_connect(id_from, uid_to):
             send(id_from, strings.CONN_WAIT.format(uid=uid_to))
             send(id_to, strings.CONN_NOTIFICATION.format(uid=uid_from,
                                                          name=name_from))
+
+        msgs = storage.get_msgs(id_to, id_from)
+        if len(msgs) > 0:
+            for msg in msgs:
+                msg = strings.MSG.format(name=name_to, msg=msg)
+                send(id_from, msg)
     else:
         send(id_from, strings.INVALID_UID)
 
@@ -43,11 +42,11 @@ def execute_cmd(msg_data):
         if size == 1:
             storage.wait(id_from, True)
             send(id_from, strings.WAIT_FOR_PARAMS)
-        elif size == 2:
+        elif size == 2:  # по UID
             storage.wait(id_from, False)
             uid_to = args[1].upper()  # получаем аргумент команды
             _cmd_connect(id_from, uid_to)
-        else:
+        else:  # по социальной сети и нику/id
             storage.wait(id_from, False)
 
             real_id_to = args[1].upper()
@@ -81,7 +80,6 @@ def execute_cmd(msg_data):
             send(id_from, part)
 
     elif msg.startswith(('/status', '/статус')):
-        others = storage.get_others(id_from)
         conn_id = storage.get_cur_con(id_from)
         if conn_id is not None:
             conn_uid = storage.get_uid(conn_id)
@@ -89,10 +87,13 @@ def execute_cmd(msg_data):
         else:
             conn_uid = 'Нет собеседника'
             name = ''
+
+        others = storage.get_others(id_from)
         if len(others) == 0:
             others_s = '(Отсутствуют)'
         else:
             others_s = ', '.join(map(lambda u: f"{u[0]} ({u[1]})", others))
+
         uid_from = storage.get_uid(id_from)
         send(id_from, strings.STATUS.format(
             uid=uid_from,
@@ -100,6 +101,7 @@ def execute_cmd(msg_data):
             others=others_s,
             name=name
         ))
+
     else:
         send(id_from, strings.UNDEFINED_CMD)
 
@@ -113,8 +115,6 @@ def send(id_to, msg, **kwargs):
 
 
 def forward(msg_data):
-    logging.debug(msg_data['msg'])
-
     if not storage.user_exists(msg_data['real_id'], msg_data['social']):
         id_from = storage.add_user(msg_data['real_id'], msg_data['social'],
                                    msg_data['name'], msg_data['nick'])
@@ -135,15 +135,17 @@ def forward(msg_data):
         execute_cmd(msg_data)
     else:
         id_to = storage.get_cur_con(id_from)
+
         if id_to is None:
             send(id_from, strings.NO_RECIPIENT)
+            return
+
+        if id_from != storage.get_cur_con(id_to):
+            storage.add_msg(id_from, id_to, msg_data['msg'])
         else:
-            if id_from != storage.get_cur_con(id_to):
-                storage.add_msg(id_from, id_to, msg_data['msg'])
-            else:
-                name = msg_data.get('name') or storage.get_name(id_from)
-                msg = strings.MSG.format(
-                    name=name,
-                    msg=msg_data['msg']
-                )
-                send(id_to, msg)
+            name = msg_data.get('name') or storage.get_name(id_from)
+            msg = strings.MSG.format(
+                name=name,
+                msg=msg_data['msg']
+            )
+            send(id_to, msg)
