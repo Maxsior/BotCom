@@ -80,10 +80,10 @@ def update_uid(real_id, social, name=None):
         if name is None:
             uid = utils.generate_uid()
         else:
-            uid = name
+            uid = name[:20]
             cursor.execute(
                 "SELECT true FROM uids WHERE uid = %s",
-                (name,)
+                (uid,)
             )
             if bool(cursor.fetchone()):
                 return None
@@ -94,6 +94,14 @@ def update_uid(real_id, social, name=None):
         )
         db.commit()
         return uid
+
+
+def get_social(id_):
+    cursor.execute(
+        "SELECT social FROM uids WHERE id = %s",
+        (id_,)
+    )
+    return cursor.fetchone()[0]
 
 
 def user_exists(id_, social=None):
@@ -184,7 +192,10 @@ def get_msgs(id_from, id_to):
 def get_others(id_to):
     if id_to is None:
         return ()
-    cursor.execute("SELECT name, uid FROM uids WHERE current = %s", (id_to,))
+    cursor.execute(
+        "SELECT name, uid, social FROM uids WHERE current = %s",
+        (id_to,)
+    )
     return cursor.fetchall()
 
 

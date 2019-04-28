@@ -37,7 +37,7 @@ while True:
     post({
         'type': 'message_new',
         'object': {
-            'from_id': 188482059,
+            'from_id': 119981612,
             'text': inp
         }
     }, 'vk')

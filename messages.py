@@ -10,14 +10,18 @@ def _cmd_connect(id_from, uid_to):
         uid_from = storage.get_uid(id_from)
         name_from = storage.get_name(id_from)
         name_to = storage.get_name(id_to)
+        social_from = storage.get_social(id_from)
+        social_to = storage.get_social(id_to)
 
         if storage.get_cur_con(id_to) == id_from:
             send(id_from, strings.CONNECTED.format(uid=uid_to, name=name_to))
             send(id_to, strings.CONNECTED.format(uid=uid_from, name=name_from))
         else:
-            send(id_from, strings.CONN_WAIT.format(uid=uid_to))
+            send(id_from, strings.CONN_WAIT.format(uid=uid_to,
+                                                   social=social_to))
             send(id_to, strings.CONN_NOTIFICATION.format(uid=uid_from,
-                                                         name=name_from))
+                                                         name=name_from,
+                                                         social=social_from))
 
         msgs = storage.get_msgs(id_to, id_from)
         if len(msgs) > 0:
@@ -83,7 +87,9 @@ def execute_cmd(msg_data):
         storage.delete_user(id_from)
 
     elif msg.startswith(('/close', '/off', '/отключиться')):
+        id_to = storage.get_cur_con(id_from)
         storage.set_current(id_from, None)
+        send(id_to, strings.FRIEND_OFF)
         send(id_from, strings.OFF)
 
     elif msg.startswith(('/help', '/помощь')):
@@ -103,7 +109,9 @@ def execute_cmd(msg_data):
         if len(others) == 0:
             others_s = '(Отсутствуют)'
         else:
-            others_s = ', '.join(map(lambda u: f"{u[0]} ({u[1]})", others))
+            others_s = ', '.join(map(
+                lambda u: f"{u[0]} ({u[1]}) из {u[2]}", others)
+            )
 
         uid_from = storage.get_uid(id_from)
         send(id_from, strings.STATUS.format(
