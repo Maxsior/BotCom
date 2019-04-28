@@ -33,8 +33,19 @@ def execute_cmd(msg_data):
     id_from = storage.get_id(msg_data['real_id'], msg_data['social'])
 
     if msg.startswith(('/reg', '/start', '/рег', '/регистрация')):
-        uid = storage.update_uid(msg_data['real_id'], msg_data['social'])
-        send(id_from, strings.NEW_UID.format(uid=uid))
+        args = msg.split()
+        if len(args) == 1:
+            uid = storage.update_uid(msg_data['real_id'], msg_data['social'])
+        else:
+            uid = storage.update_uid(
+                msg_data['real_id'],
+                msg_data['social'],
+                args[1].upper()
+            )
+        if uid is None:
+            send(id_from, strings.TAKEN_UID)
+        else:
+            send(id_from, strings.NEW_UID.format(uid=uid))
 
     elif msg.startswith(('/conn', '/chat', '/подкл', '/подключиться', '/чат')):
         args = msg.split()

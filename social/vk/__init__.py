@@ -1,4 +1,3 @@
-from os import path
 import random
 import json
 from urllib.parse import urlencode

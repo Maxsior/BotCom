@@ -75,9 +75,19 @@ def wait(id_, waiting):
     db.commit()
 
 
-def update_uid(real_id, social):
+def update_uid(real_id, social, name=None):
     if user_exists(real_id, social):
-        uid = utils.generate_uid()
+        if name is None:
+            uid = utils.generate_uid()
+        else:
+            uid = name
+            cursor.execute(
+                "SELECT true FROM uids WHERE uid = %s",
+                (name,)
+            )
+            if bool(cursor.fetchone()):
+                return None
+
         cursor.execute(
             "UPDATE uids SET uid = %s WHERE real_id = %s and social = %s",
             (uid, real_id, social)
