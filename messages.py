@@ -3,6 +3,27 @@ from social import vk, telegram
 import strings
 
 
+def _is_reg_cmd(msg):
+    return msg.startswith(('/reg', '/start', '/рег', '/регистрация'))
+
+
+def _cmd_registration(**kwargs):
+    exists = storage.user_exists(kwargs['real_id'], kwargs['social'])
+    uid = kwargs.get('uid')
+    if not exists:
+        id_ = storage.add_user(kwargs['real_id'], kwargs['social'],
+                               kwargs['name'], kwargs['nick'])
+        if uid is not None:
+            uid = storage.update_uid(kwargs['real_id'], kwargs['social'], uid)
+        else:
+            uid = storage.get_uid(id_)
+    else:
+        id_ = storage.get_id(kwargs['real_id'], kwargs['social'])
+        uid = storage.update_uid(kwargs['real_id'], kwargs['social'],
+                                 kwargs.get('uid'))
+    return id_, uid, exists
+
+
 def _cmd_connect(id_from, uid_to):
     id_to = storage.get_id(uid_to)
     if id_to is not None:
@@ -36,16 +57,18 @@ def execute_cmd(msg_data):
     msg = msg_data["msg"]
     id_from = storage.get_id(msg_data['real_id'], msg_data['social'])
 
-    if msg.startswith(('/reg', '/start', '/рег', '/регистрация')):
+    if _is_reg_cmd(msg):
         args = msg.split()
         if len(args) == 1:
-            uid = storage.update_uid(msg_data['real_id'], msg_data['social'])
+            id_from, uid, existed = _cmd_registration(**msg_data)
         else:
-            uid = storage.update_uid(
-                msg_data['real_id'],
-                msg_data['social'],
-                args[1].upper()
-            )
+            id_from, uid, existed = _cmd_registration(**msg_data,
+                                                      uid=args[1].upper())
+
+        if not existed:
+            send(id_from, strings.HELP)
+            send(id_from, '---', keyboard='main')
+
         if uid is None:
             send(id_from, strings.TAKEN_UID)
         else:
@@ -81,16 +104,18 @@ def execute_cmd(msg_data):
                 send(id_from, strings.NO_SOCIAL)
 
     elif msg.startswith(('/unreg', '/del', '/delete', '/удалить_аккаунт')):
-        send(id_from,
-             strings.BYE.format(social=msg_data['social']),
+        send(id_from, strings.BYE.format(social=msg_data['social']),
              keyboard='reset')
         storage.delete_user(id_from)
 
     elif msg.startswith(('/close', '/off', '/отключиться')):
         id_to = storage.get_cur_con(id_from)
-        storage.set_current(id_from, None)
-        send(id_to, strings.FRIEND_OFF)
-        send(id_from, strings.OFF)
+        if id_to is not None:
+            storage.set_current(id_from, None)
+            send(id_to, strings.FRIEND_OFF)
+            send(id_from, strings.OFF)
+        else:
+            send(id_from, strings.OFF_BLANK)
 
     elif msg.startswith(('/help', '/помощь')):
         for part in strings.FULL_HELP.split('<--->'):
@@ -114,12 +139,8 @@ def execute_cmd(msg_data):
             )
 
         uid_from = storage.get_uid(id_from)
-        send(id_from, strings.STATUS.format(
-            uid=uid_from,
-            current=conn_uid,
-            others=others_s,
-            name=name
-        ))
+        send(id_from, strings.STATUS.format(uid=uid_from, current=conn_uid,
+                                            others=others_s, name=name))
 
     else:
         send(id_from, strings.UNDEFINED_CMD)
@@ -135,18 +156,13 @@ def send(id_to, msg, **kwargs):
 
 def forward(msg_data):
     if not storage.user_exists(msg_data['real_id'], msg_data['social']):
-        id_from = storage.add_user(msg_data['real_id'], msg_data['social'],
-                                   msg_data['name'], msg_data['nick'])
-        uid = storage.get_uid(id_from)
-        send(id_from, strings.HELP)
-        send(id_from, strings.NEW_UID.format(uid=uid), keyboard='main')
+        if not _is_reg_cmd(msg_data['msg']):
+            msg_data['msg'] = '/reg'
+        execute_cmd(msg_data)
+        return
 
-        if msg_data["msg"].startswith(('/reg', '/start', '/рег',
-                                       '/регистрация')):
-            return
     else:
         id_from = storage.get_id(msg_data['real_id'], msg_data['social'])
-
         if storage.is_waiting(id_from):
             msg_data['msg'] = '/conn ' + msg_data['msg']
 

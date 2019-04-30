@@ -24,7 +24,7 @@ def post(data, network_name, port=8080):
     try:
         response = conn.getresponse()
         print(response.read().decode())
-    except RemoteDisconnected as e:
+    except (RemoteDisconnected, ConnectionResetError) as e:
         print(e)
     conn.close()
 
