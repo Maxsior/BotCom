@@ -1,6 +1,6 @@
-from config import keys
 from urllib.parse import urlencode
 from urllib.request import urlopen
+from config import keys
 
 NAME = 'telegram'
 
@@ -25,9 +25,9 @@ def parse(data):
         name = msg['from']['first_name'] + ' ' + msg['from']['last_name']
         return {
             'real_id': str(msg['from']['id']),
-            'msg': msg['text'],
-            'name': name,
             'nick': msg['from']['username'],
+            'name': name,
+            'msg': msg['text'],
             'social': NAME
         }
     else:

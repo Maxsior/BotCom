@@ -1,7 +1,6 @@
 import json
 import logging
-from social import vk
-from social import telegram
+from social import vk, telegram, viber
 import config
 import messages
 
@@ -22,8 +21,12 @@ def application(environ, start_response):
         elif path == '/' + telegram.NAME:
             logging.info('запрос от бота Телеграм')
             result = telegram.parse(data)
+        elif path == '/' + viber.NAME:
+            logging.info('запрос от бота Viber')
+            result = viber.parse(data)
         else:
             logging.warning('неизвестный запрос')
+            logging.warning(str(data))
             result = 'Неизвестная сеть'
         if type(result) == str:
             yield result.encode('utf-8')

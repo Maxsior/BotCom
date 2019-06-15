@@ -17,7 +17,7 @@ def send_message(real_id, msg, **kwargs):
         'v': 5.92
     }
     if 'keyboard' in kwargs:
-        keyboard = f"./social/vk/{kwargs['keyboard']}_keyboard.json"
+        keyboard = f"./social/{NAME}/{kwargs['keyboard']}_keyboard.json"
         with open(keyboard, encoding='utf-8') as f:
             query['keyboard'] = f.read()
 
@@ -36,9 +36,9 @@ def parse(data):
         name, nick = _get_info(msg['from_id'])
         return {
             'real_id': str(msg['from_id']),
-            'msg': msg['text'],
-            'name': name,
             'nick': nick,
+            'name': name,
+            'msg': msg['text'],
             'social': NAME
         }
     elif data_type == 'confirmation' and data.get('group_id') == 176977577:

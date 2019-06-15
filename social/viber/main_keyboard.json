@@ -1,0 +1,42 @@
+{
+  "Type": "keyboard",
+  "DefaultHeight": false,
+  "Buttons": [
+    {
+      "ActionType": "reply",
+      "ActionBody": "/conn",
+      "Text": "Подключиться",
+      "TextSize": "regular"
+    },
+    {
+      "ActionType": "reply",
+      "ActionBody": "/reg",
+      "Text": "Обновить UID",
+      "TextSize": "regular"
+    },
+    {
+      "ActionType": "reply",
+      "ActionBody": "/status",
+      "Text": "Статус",
+      "TextSize": "regular"
+    },
+    {
+      "ActionType": "reply",
+      "ActionBody": "/help",
+      "Text": "Справка"
+      "TextSize": "regular"
+    },
+    {
+      "ActionType": "reply",
+      "ActionBody": "/close",
+      "Text": "Закрыть диалог",
+      "TextSize": "regular"
+    },
+    {
+      "ActionType": "reply",
+      "ActionBody": "/unreg",
+      "Text": "Удалить аккаунт",
+      "TextSize": "regular"
+    }
+  ]
+}
