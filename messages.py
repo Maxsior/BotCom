@@ -1,5 +1,5 @@
 import storage
-from social import vk, telegram
+import social
 import strings
 
 
@@ -88,12 +88,12 @@ def execute_cmd(msg_data):
             storage.wait(id_from, False)
 
             real_id_to = args[1].upper()
-            social = args[2].lower()
+            social_name = args[2].lower()
 
-            if social in (vk.NAME, telegram.NAME):
+            if social_name in social.modules:
                 uid_to = storage.get_uid(
-                    storage.get_id(real_id_to, social) or
-                    storage.get_id(real_id_to, social, by_nick=True)
+                    storage.get_id(real_id_to, social_name) or
+                    storage.get_id(real_id_to, social_name, by_nick=True)
                 )
 
                 if uid_to is None:
@@ -147,11 +147,9 @@ def execute_cmd(msg_data):
 
 
 def send(id_to, msg, **kwargs):
-    real_id, social = storage.get_real_id(id_to)
-    if social == vk.NAME:
-        vk.send_message(real_id, msg, **kwargs)
-    elif social == telegram.NAME:
-        telegram.send_message(real_id, msg, **kwargs)
+    real_id, social_name = storage.get_real_id(id_to)
+    module = social.modules[social_name]
+    module.send_message(real_id, msg, **kwargs)
 
 
 def forward(msg_data):

@@ -24,7 +24,7 @@ def post(data, network_name, port=8080):
     try:
         response = conn.getresponse()
         print(response.read().decode())
-    except (RemoteDisconnected, ConnectionResetError) as e:
+    except (RemoteDisconnected, ConnectionResetError, ConnectionRefusedError) as e:
         print(e)
     conn.close()
 
@@ -34,10 +34,9 @@ while True:
     inp = input('Сообщение: ')
     if inp == '':
         break
-    post({
-        'type': 'message_new',
-        'object': {
-            'from_id': 119981612,
-            'text': inp
-        }
-    }, 'vk')
+    post({'event': 'message', 'timestamp': 1560628020138,
+          'chat_hostname': 'SN-CHAT-07_', 'message_token': 5320769248815063866,
+          'sender': {'id': 'mKPir9gmxRACnDzilOrBZg==', 'name': 'Максим',
+                     'avatar': 'http://dl-media.viber.com/1/share/2/long/bots/generic-avatar%402x.png',
+                     'language': 'ru', 'country': 'RU', 'api_version': 7},
+          'message': {'text': inp, 'type': 'text'}, 'silent': False}, 'viber')

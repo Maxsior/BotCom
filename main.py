@@ -1,8 +1,8 @@
 import json
 import logging
-from social import vk, telegram, viber
 import config
 import messages
+import social
 
 
 # WSGI main
@@ -15,19 +15,20 @@ def application(environ, start_response):
         size = int(environ.get("CONTENT_LENGTH"))
         body = environ.get("wsgi.input").read(size)
         data = json.loads(body.decode('utf-8'))
-        if path == '/' + vk.NAME:
-            logging.info('запрос от бота ВКонтакте')
-            result = vk.parse(data)
-        elif path == '/' + telegram.NAME:
-            logging.info('запрос от бота Телеграм')
-            result = telegram.parse(data)
-        elif path == '/' + viber.NAME:
-            logging.info('запрос от бота Viber')
-            result = viber.parse(data)
+
+        # get module according path
+        end = path.find('/', 1)
+        module_name = path[1:end] if end != -1 else path[1:]
+        logging.info('запрос бота ' + module_name)
+
+        if module_name in social.modules:
+            module = social.modules[module_name]
+            result = module.parse(data)
         else:
             logging.warning('неизвестный запрос')
             logging.warning(str(data))
             result = 'Неизвестная сеть'
+
         if type(result) == str:
             yield result.encode('utf-8')
         else:

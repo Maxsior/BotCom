@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 from config import keys
 
-NAME = 'vk'
+_, NAME = __name__.split('.')
 
 
 def send_message(real_id, msg, **kwargs):

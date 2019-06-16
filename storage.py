@@ -19,7 +19,7 @@ class _StableCursor(MySQLdb.cursors.Cursor):
 
 
 db: MySQLdb.Connection = None
-cursor: _StableCursor = None
+cursor: _StableCursor
 
 
 def _init(force=False):
@@ -51,7 +51,7 @@ def add_user(real_id, social, name, nick):
     cursor.execute(
         "INSERT INTO uids (uid, real_id, social, name, nick)"
         "VALUES (%s, %s, %s, %s, %s)",
-        (uid, real_id, social, name, nick.lower())
+        (uid, real_id, social, name, nick.lower() if nick else None)
     )
     db.commit()
     logging.info('зарегистрирован новый пользователь')

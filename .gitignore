@@ -4,3 +4,4 @@ config.py
 DB/
 logs/*
 !logs/.gitkeep
+make_requests.py

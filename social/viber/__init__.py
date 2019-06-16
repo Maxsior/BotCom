@@ -2,7 +2,7 @@ from urllib.request import Request, urlopen
 import json
 from config import keys
 
-NAME = 'viber'
+_, NAME = __name__.split('.')
 
 
 def send_message(real_id, msg, **kwargs):
@@ -35,6 +35,7 @@ def parse(data):
         return {
             'real_id': str(user['id']),
             'name': user['name'],
+            'nick': None,
             'msg': msg['text'],
             'social': NAME
         }
