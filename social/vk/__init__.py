@@ -4,13 +4,13 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 from config import keys
 
-_, NAME = __name__.split('.')
+NAME = __name__[7:]
 
 
 def send_message(real_id, msg, **kwargs):
     api_url = 'https://api.vk.com/method/messages.send?'
     query = {
-        'user_id': real_id,
+        'peer_id': real_id,
         'message': msg,
         'access_token': keys[NAME],
         'random_id': random.randint(0, 2**32),
@@ -35,7 +35,7 @@ def parse(data):
 
         name, nick = _get_info(msg['from_id'])
         return {
-            'real_id': str(msg['from_id']),
+            'real_id': str(msg['peer_id']),
             'nick': nick,
             'name': name,
             'msg': msg['text'],

@@ -1,5 +1,4 @@
 {
-  "Type": "keyboard",
   "DefaultHeight": false,
   "Buttons": [
     {
@@ -23,7 +22,7 @@
     {
       "ActionType": "reply",
       "ActionBody": "/help",
-      "Text": "Справка"
+      "Text": "Справка",
       "TextSize": "regular"
     },
     {

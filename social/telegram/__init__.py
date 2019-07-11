@@ -2,7 +2,7 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 from config import keys
 
-_, NAME = __name__.split('.')
+NAME = __name__[7:]
 
 
 def send_message(real_id, msg, **kwargs):
@@ -24,7 +24,7 @@ def parse(data):
         msg = data['message']
         name = msg['from']['first_name'] + ' ' + msg['from']['last_name']
         return {
-            'real_id': str(msg['from']['id']),
+            'real_id': str(msg['chat']['id']),
             'nick': msg['from']['username'],
             'name': name,
             'msg': msg['text'],

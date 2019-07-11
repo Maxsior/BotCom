@@ -1,5 +1,11 @@
 {
-    "Type":"keyboard",
-    "DefaultHeight": false,
-    "Buttons":[]
- }
+  "DefaultHeight": false,
+  "Buttons": [
+    {
+      "ActionType": "reply",
+      "ActionBody": "/reg",
+      "Text": "Начать",
+      "TextSize": "regular"
+    }
+  ]
+}

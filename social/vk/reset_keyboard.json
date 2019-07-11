@@ -1,4 +1,15 @@
 {
-  "buttons": [],
-  "one_time": true
+  "one_time": true,
+  "buttons": [
+    [
+      {
+        "action": {
+          "type": "text",
+          "payload": "\"/reg\"",
+          "label": "Начать"
+        },
+        "color": "positive"
+      }
+    ]
+  ]
 }

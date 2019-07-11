@@ -2,7 +2,7 @@ from urllib.request import Request, urlopen
 import json
 from config import keys
 
-_, NAME = __name__.split('.')
+NAME = __name__[7:]
 
 
 def send_message(real_id, msg, **kwargs):

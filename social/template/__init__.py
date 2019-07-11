@@ -2,7 +2,9 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 from config import keys  # You needn't add your key in config
 
-_, NAME = __name__.split('.')
+# __name__ is 'social.template'
+# but we need only second part
+NAME = __name__[7:]
 
 
 def send_message(real_id, msg, **kwargs):
