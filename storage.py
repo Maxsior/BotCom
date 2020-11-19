@@ -1,15 +1,15 @@
-import MySQLdb
-import MySQLdb.cursors
+import pymysql
+import pymysql.cursors
 import logging
 from config import db_info
 import utils
 
 
-class _StableCursor(MySQLdb.cursors.Cursor):
+class _StableCursor(pymysql.cursors.Cursor):
     def execute(self, query, args=None):
         try:
             super().execute(query, args)
-        except MySQLdb.OperationalError as e:
+        except pymysql.OperationalError as e:
             if e.args[0] not in (2006, 2013):
                 raise e
 
@@ -18,14 +18,14 @@ class _StableCursor(MySQLdb.cursors.Cursor):
         return self
 
 
-db: MySQLdb.Connection = None
+db: pymysql.Connection = None
 cursor: _StableCursor
 
 
 def _init(force=False):
     global db, cursor
     if force or db is None:
-        db = MySQLdb.connect(**db_info)
+        db = pymysql.connect(**db_info)
         cursor = db.cursor(_StableCursor)
 
 
@@ -49,7 +49,7 @@ def add_user(real_id, social, name, nick):
     uid = utils.generate_uid()
 
     cursor.execute(
-        "INSERT INTO uids (uid, real_id, social, name, nick)"
+        "INSERT INTO uids (uid, real_id, messengers, name, nick)"
         "VALUES (%s, %s, %s, %s, %s)",
         (uid, real_id, social, name, nick.lower() if nick else None)
     )
@@ -89,7 +89,7 @@ def update_uid(real_id, social, name=None):
                 return None
 
         cursor.execute(
-            "UPDATE uids SET uid = %s WHERE real_id = %s and social = %s",
+            "UPDATE uids SET uid = %s WHERE real_id = %s and messengers = %s",
             (uid, real_id, social)
         )
         db.commit()
@@ -98,7 +98,7 @@ def update_uid(real_id, social, name=None):
 
 def get_social(id_):
     cursor.execute(
-        "SELECT social FROM uids WHERE id = %s",
+        "SELECT messengers FROM uids WHERE id = %s",
         (id_,)
     )
     return cursor.fetchone()[0]
@@ -112,7 +112,7 @@ def user_exists(id_, social=None):
         )
     else:
         cursor.execute(
-            "SELECT COUNT(*) FROM uids WHERE real_id = %s and social = %s",
+            "SELECT COUNT(*) FROM uids WHERE real_id = %s and messengers = %s",
             (id_, social)
         )
     return bool(cursor.fetchone()[0])
@@ -140,7 +140,7 @@ def get_id(id_, social=None, by_nick=False):
         cursor.execute("SELECT id FROM uids WHERE uid = %s", (id_,))
     else:
         cursor.execute(
-            "SELECT id FROM uids WHERE {key} = %s and social = %s"
+            "SELECT id FROM uids WHERE {key} = %s and messengers = %s"
             .format(key=('real_id', 'nick')[by_nick]),
             (id_, social)
         )
@@ -153,7 +153,7 @@ def get_id(id_, social=None, by_nick=False):
 
 
 def get_real_id(id_):
-    cursor.execute("SELECT real_id, social FROM uids WHERE id = %s", (id_,))
+    cursor.execute("SELECT real_id, messengers FROM uids WHERE id = %s", (id_,))
     return cursor.fetchone()
 
 
@@ -193,7 +193,7 @@ def get_others(id_to):
     if id_to is None:
         return ()
     cursor.execute(
-        "SELECT name, uid, social FROM uids WHERE current = %s",
+        "SELECT name, uid, messengers FROM uids WHERE current = %s",
         (id_to,)
     )
     return cursor.fetchall()

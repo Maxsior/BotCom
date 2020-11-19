@@ -12,7 +12,7 @@ def send_message(real_id, msg, **kwargs):
         'text': msg
     }
     if 'keyboard' in kwargs:
-        keyboard = f"./social/telegram/{kwargs['keyboard']}_keyboard.json"
+        keyboard = f"./messengers/telegram/{kwargs['keyboard']}_keyboard.json"
         with open(keyboard, encoding='utf-8') as f:
             query['reply_markup'] = f.read()
     api_url += urlencode(query)
@@ -28,7 +28,7 @@ def parse(data):
             'nick': msg['from']['username'],
             'name': name,
             'msg': msg['text'],
-            'social': NAME
+            'messengers': NAME
         }
     else:
         return ''
