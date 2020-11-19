@@ -1,7 +1,5 @@
 __pycache__/
 .idea/
-config.py
+venv/
 DB/
-logs/*
-!logs/.gitkeep
-make_requests.py
+config.py

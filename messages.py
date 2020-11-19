@@ -1,5 +1,5 @@
 import storage
-import social
+import messengers
 import strings
 
 
@@ -8,18 +8,18 @@ def _is_reg_cmd(msg):
 
 
 def _cmd_registration(**kwargs):
-    exists = storage.user_exists(kwargs['real_id'], kwargs['social'])
+    exists = storage.user_exists(kwargs['real_id'], kwargs['messengers'])
     uid = kwargs.get('uid')
     if not exists:
-        id_ = storage.add_user(kwargs['real_id'], kwargs['social'],
+        id_ = storage.add_user(kwargs['real_id'], kwargs['messengers'],
                                kwargs['name'], kwargs['nick'])
         if uid is not None:
-            uid = storage.update_uid(kwargs['real_id'], kwargs['social'], uid)
+            uid = storage.update_uid(kwargs['real_id'], kwargs['messengers'], uid)
         else:
             uid = storage.get_uid(id_)
     else:
-        id_ = storage.get_id(kwargs['real_id'], kwargs['social'])
-        uid = storage.update_uid(kwargs['real_id'], kwargs['social'],
+        id_ = storage.get_id(kwargs['real_id'], kwargs['messengers'])
+        uid = storage.update_uid(kwargs['real_id'], kwargs['messengers'],
                                  kwargs.get('uid'))
     return id_, uid, exists
 
@@ -55,7 +55,7 @@ def _cmd_connect(id_from, uid_to):
 
 def execute_cmd(msg_data):
     msg = msg_data["msg"]
-    id_from = storage.get_id(msg_data['real_id'], msg_data['social'])
+    id_from = storage.get_id(msg_data['real_id'], msg_data['messengers'])
 
     if _is_reg_cmd(msg):
         args = msg.split()
@@ -90,7 +90,7 @@ def execute_cmd(msg_data):
             real_id_to = args[1].upper()
             social_name = args[2].lower()
 
-            if social_name in social.modules:
+            if social_name in messengers.modules:
                 uid_to = storage.get_uid(
                     storage.get_id(real_id_to, social_name) or
                     storage.get_id(real_id_to, social_name, by_nick=True)
@@ -104,7 +104,7 @@ def execute_cmd(msg_data):
                 send(id_from, strings.NO_SOCIAL)
 
     elif msg.startswith(('/unreg', '/del', '/delete', '/удалить_аккаунт')):
-        send(id_from, strings.BYE.format(social=msg_data['social']),
+        send(id_from, strings.BYE.format(social=msg_data['messengers']),
              keyboard='reset')
         storage.delete_user(id_from)
 
@@ -148,19 +148,19 @@ def execute_cmd(msg_data):
 
 def send(id_to, msg, **kwargs):
     real_id, social_name = storage.get_real_id(id_to)
-    module = social.modules[social_name]
+    module = messengers.modules[social_name]
     module.send_message(real_id, msg, **kwargs)
 
 
 def forward(msg_data):
-    if not storage.user_exists(msg_data['real_id'], msg_data['social']):
+    if not storage.user_exists(msg_data['real_id'], msg_data['messengers']):
         if not _is_reg_cmd(msg_data['msg']):
             msg_data['msg'] = '/reg'
         execute_cmd(msg_data)
         return
 
     else:
-        id_from = storage.get_id(msg_data['real_id'], msg_data['social'])
+        id_from = storage.get_id(msg_data['real_id'], msg_data['messengers'])
         if storage.is_waiting(id_from):
             msg_data['msg'] = '/conn ' + msg_data['msg']
 

@@ -1,44 +1,34 @@
-import json
-import logging
-import config
+from logging import getLogger
+from flask import Flask, request, abort, send_file
 import messages
-import social
+import messengers
+
+app = Flask(__name__, static_url_path='/', static_folder='pages')
+
+logger = getLogger(__name__)
 
 
-# WSGI main
-def application(environ, start_response):
-    config.configure_logger()
-    method = environ.get('REQUEST_METHOD')
-    path = environ.get('PATH_INFO')
-    if method == 'POST':
-        start_response('200 OK', [('Content-Type', 'application/json')])
-        size = int(environ.get("CONTENT_LENGTH"))
-        body = environ.get("wsgi.input").read(size)
-        data = json.loads(body.decode('utf-8'))
+@app.route('/<string:messenger>', methods=['POST'])
+def main(messenger):
+    logger.info(f'request to "{messenger}"')
 
-        # get module according path
-        end = path.find('/', 1)
-        module_name = path[1:end] if end != -1 else path[1:]
-        logging.info('запрос бота ' + module_name)
+    data = request.json
 
-        if module_name in social.modules:
-            module = social.modules[module_name]
-            result = module.parse(data)
-        else:
-            logging.warning('неизвестный запрос')
-            logging.warning(str(data))
-            result = 'Неизвестная сеть'
-
-        if type(result) == str:
-            yield result.encode('utf-8')
-        else:
-            messages.forward(result)
-            yield b'ok'
+    if messenger in messengers.modules:
+        module = messengers.modules[messenger]
+        result = module.parse(data)
+        messages.forward(result)
+        return 'ok'
     else:
-        if path == '/':
-            redirect_headers = [('Location', '/pages/')]
-            start_response('301 Moved Permanently', redirect_headers)
-            yield b''
-        else:
-            start_response('404 Not Found', [('Content-Type', 'text/plain')])
-            yield b'Page is not found!'
+        logger.warning(f'unknown target "{messenger}" with {data}')
+        logger.warning(str(data))
+        abort(404)
+
+
+@app.route('/', methods=['GET'])
+def site():
+    return send_file('pages/index.html')
+
+
+if __name__ == '__main__':
+    app.run(debug=True)

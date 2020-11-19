@@ -2,7 +2,7 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 from config import keys  # You needn't add your key in config
 
-# __name__ is 'social.template'
+# __name__ is 'messengers.template'
 # but we need only second part
 NAME = __name__[7:]
 
@@ -16,7 +16,7 @@ def send_message(real_id, msg, **kwargs):
         'text': msg
     }
     if 'keyboard' in kwargs:
-        keyboard = f"./social/{NAME}/{kwargs['keyboard']}_keyboard.json"
+        keyboard = f"./messengers/{NAME}/{kwargs['keyboard']}_keyboard.json"
         with open(keyboard, encoding='utf-8') as f:
             query['keyboard'] = f.read()  # 3. Set keyboard option
     api_url += urlencode(query)
@@ -30,7 +30,7 @@ def parse(data):
         'nick': '',
         'name': '',
         'msg': '',
-        'social': NAME
+        'messengers': NAME
     }
 
 
