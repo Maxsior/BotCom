@@ -5,7 +5,7 @@ import messengers
 
 app = Flask(__name__,
             static_url_path='/',
-            static_folder='pages')
+            static_folder='../pages')
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -30,7 +30,7 @@ def main(messenger):
 
 @app.route('/', methods=['GET'])
 def site():
-    return send_file('pages/index.html')
+    return send_file('../pages/index.html')
 
 
 if __name__ == '__main__':
