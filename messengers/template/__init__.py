@@ -1,10 +1,9 @@
 from urllib.parse import urlencode
 from urllib.request import urlopen
-from config import keys  # You needn't add your key in config
 
 # __name__ is 'messengers.template'
 # but we need only second part
-NAME = __name__[7:]
+NAME = __name__.split('.')[1]
 
 
 def send_message(real_id, msg, **kwargs):

@@ -1,10 +1,10 @@
+import os
 import random
 import json
 from urllib.parse import urlencode
 from urllib.request import urlopen
-from config import keys
 
-NAME = __name__[7:]
+NAME = __name__.split('.')[1]
 
 
 def send_message(real_id, msg, **kwargs):
@@ -12,7 +12,7 @@ def send_message(real_id, msg, **kwargs):
     query = {
         'peer_id': real_id,
         'message': msg,
-        'access_token': keys[NAME],
+        'access_token': os.getenv('VK_TOKEN'),
         'random_id': random.randint(0, 2**32),
         'v': 5.92
     }
@@ -42,7 +42,7 @@ def parse(data):
             'messengers': NAME
         }
     elif data_type == 'confirmation' and data.get('group_id') == 176977577:
-        return keys['vk_confirmation']
+        return os.getenv('VK_CONFIRMATION')
     else:
         return ''
 
@@ -52,7 +52,7 @@ def _get_info(real_id):
     query = urlencode({
         'user_ids': real_id,
         'fields': 'domain',
-        'access_token': keys[NAME],
+        'access_token': os.getenv('VK_TOKEN'),
         'v': 5.92
     })
     api_url += query
