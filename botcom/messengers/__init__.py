@@ -1,9 +1,24 @@
-import os
 import importlib
+from abc import ABC, abstractmethod
+from typing import Optional, Union
+from dtos import Message
 
-__exclude_list = ['template', '__pycache__']
 
-modules = {}
-for f in os.scandir(os.path.join(os.path.dirname(__file__))):
-    if f.is_dir() and f.name not in __exclude_list:
-        modules[f.name] = importlib.import_module('messengers.' + f.name)
+class Messenger(ABC):
+    @staticmethod
+    @abstractmethod
+    def send(id_to: Union[str, int], msg: Message):
+        raise NotImplemented()
+
+    @staticmethod
+    @abstractmethod
+    def parse(data) -> Message:
+        raise NotImplemented()
+
+
+def get_class(name: str) -> Optional[Messenger]:
+    try:
+        module = importlib.import_module(f'{__name__}.{name}')
+        return getattr(module, name.capitalize())
+    except (ImportError, AttributeError):
+        return None
