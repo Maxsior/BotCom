@@ -9,48 +9,36 @@ def _is_reg_cmd(msg):
 
 def _cmd_registration(**kwargs):
     exists = storage.user_exists(kwargs['real_id'], kwargs['messengers'])
-    uid = kwargs.get('uid')
     if not exists:
         id_ = storage.add_user(kwargs['real_id'], kwargs['messengers'],
                                kwargs['name'], kwargs['nick'])
-        if uid is not None:
-            uid = storage.update_uid(kwargs['real_id'], kwargs['messengers'], uid)
-        else:
-            uid = storage.get_uid(id_)
     else:
         id_ = storage.get_id(kwargs['real_id'], kwargs['messengers'])
-        uid = storage.update_uid(kwargs['real_id'], kwargs['messengers'],
-                                 kwargs.get('uid'))
-    return id_, uid, exists
+    return id_, exists
 
 
-def _cmd_connect(id_from, uid_to):
-    id_to = storage.get_id(uid_to)
-    if id_to is not None:
-        storage.set_current(id_from, id_to)
-        uid_from = storage.get_uid(id_from)
-        name_from = storage.get_name(id_from)
-        name_to = storage.get_name(id_to)
-        social_from = storage.get_social(id_from)
-        social_to = storage.get_social(id_to)
+def _cmd_connect(id_from, id_to):
+    storage.set_current(id_from, id_to)
+    name_from = storage.get_name(id_from)
+    name_to = storage.get_name(id_to)
+    social_from = storage.get_social(id_from)
+    social_to = storage.get_social(id_to)
 
-        if storage.get_cur_con(id_to) == id_from:
-            send(id_from, strings.CONNECTED.format(uid=uid_to, name=name_to))
-            send(id_to, strings.CONNECTED.format(uid=uid_from, name=name_from))
-        else:
-            send(id_from, strings.CONN_WAIT.format(uid=uid_to,
-                                                   social=social_to))
-            send(id_to, strings.CONN_NOTIFICATION.format(uid=uid_from,
-                                                         name=name_from,
-                                                         social=social_from))
-
-        msgs = storage.get_msgs(id_to, id_from)
-        if len(msgs) > 0:
-            for msg in msgs:
-                msg = strings.MSG.format(name=name_to, msg=msg)
-                send(id_from, msg)
+    if storage.get_cur_con(id_to) == id_from:
+        send(id_from, strings.CONNECTED.format(name=name_to))
+        send(id_to, strings.CONNECTED.format(name=name_from))
     else:
-        send(id_from, strings.INVALID_UID)
+        send(id_from, strings.CONN_WAIT.format(name=name_to,
+                                               messenger=social_to))
+        send(id_to, strings.CONN_NOTIFICATION.format(name=name_from,
+                                                     id=id_from,
+                                                     messenger=social_from))
+
+    msgs = storage.get_msgs(id_to, id_from)
+    if len(msgs) > 0:
+        for msg in msgs:
+            msg = strings.MSG.format(name=name_to, msg=msg)
+            send(id_from, msg)
 
 
 def execute_cmd(msg_data):
@@ -58,21 +46,13 @@ def execute_cmd(msg_data):
     id_from = storage.get_id(msg_data['real_id'], msg_data['messengers'])
 
     if _is_reg_cmd(msg):
-        args = msg.split()
-        if len(args) == 1:
-            id_from, uid, existed = _cmd_registration(**msg_data)
-        else:
-            id_from, uid, existed = _cmd_registration(**msg_data,
-                                                      uid=args[1].upper())
+        id_from, existed = _cmd_registration(**msg_data)
 
         if not existed:
             send(id_from, strings.HELP)
             send(id_from, '---', keyboard='main')
 
-        if uid is None:
-            send(id_from, strings.TAKEN_UID)
-        else:
-            send(id_from, strings.NEW_UID.format(uid=uid))
+        send(id_from, strings.REGISTER)
 
     elif msg.startswith(('/conn', '/chat', '/подкл', '/подключиться', '/чат')):
         args = msg.split()
@@ -80,31 +60,25 @@ def execute_cmd(msg_data):
         if size == 1:
             storage.wait(id_from, True)
             send(id_from, strings.WAIT_FOR_PARAMS)
-        elif size == 2:  # по UID
-            storage.wait(id_from, False)
-            uid_to = args[1].upper()  # получаем аргумент команды
-            _cmd_connect(id_from, uid_to)
-        else:  # по социальной сети и нику/id
+        else:
             storage.wait(id_from, False)
 
             real_id_to = args[1].upper()
-            social_name = args[2].lower()
+            messenger = args[2].lower()
 
-            if social_name in messengers.modules:
-                uid_to = storage.get_uid(
-                    storage.get_id(real_id_to, social_name) or
-                    storage.get_id(real_id_to, social_name, by_nick=True)
-                )
+            if messenger in messengers.modules:
+                id_to = storage.get_id(real_id_to, messenger) or \
+                         storage.get_id(real_id_to, messenger, by_nick=True)
 
-                if uid_to is None:
+                if id_to is None:
                     send(id_from, strings.INVALID_USER)
                 else:
-                    _cmd_connect(id_from, uid_to)
+                    _cmd_connect(id_from, id_to)
             else:
                 send(id_from, strings.NO_SOCIAL)
 
     elif msg.startswith(('/unreg', '/del', '/delete', '/удалить_аккаунт')):
-        send(id_from, strings.BYE.format(social=msg_data['messengers']),
+        send(id_from, strings.BYE.format(messenger=msg_data['messengers']),
              keyboard='reset')
         storage.delete_user(id_from)
 
@@ -123,24 +97,18 @@ def execute_cmd(msg_data):
 
     elif msg.startswith(('/status', '/статус')):
         conn_id = storage.get_cur_con(id_from)
-        if conn_id is not None:
-            conn_uid = storage.get_uid(conn_id)
-            name = storage.get_name(conn_id)
-        else:
-            conn_uid = 'Нет собеседника'
-            name = ''
+        name = storage.get_name(conn_id) if conn_id is not None else ''
 
         others = storage.get_others(id_from)
         if len(others) == 0:
             others_s = '(Отсутствуют)'
         else:
             others_s = ', '.join(map(
-                lambda u: f"{u[0]} ({u[1]}) из {u[2]}", others)
+                lambda u: f"{u[0]} ({u[1]} {u[2]})", others)
             )
 
-        uid_from = storage.get_uid(id_from)
-        send(id_from, strings.STATUS.format(uid=uid_from, current=conn_uid,
-                                            others=others_s, name=name))
+        send(id_from, strings.STATUS.format(name=name, current=conn_id,
+                                            others=others_s))
 
     else:
         send(id_from, strings.UNDEFINED_CMD)
