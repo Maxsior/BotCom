@@ -1,11 +1,14 @@
-from logging import getLogger
+import logging
 from flask import Flask, request, abort, send_file
 import messages
 import messengers
 
-app = Flask(__name__, static_url_path='/', static_folder='pages')
+app = Flask(__name__,
+            static_url_path='/',
+            static_folder='pages')
 
-logger = getLogger(__name__)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 @app.route('/<string:messenger>', methods=['POST'])
@@ -31,4 +34,6 @@ def site():
 
 
 if __name__ == '__main__':
+    logger.setLevel(logging.DEBUG)
+
     app.run(debug=True)
