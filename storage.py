@@ -1,8 +1,8 @@
 import pymysql
 import pymysql.cursors
 import logging
-from config import db_info
 import utils
+import os
 
 
 class _StableCursor(pymysql.cursors.Cursor):
@@ -25,6 +25,13 @@ cursor: _StableCursor
 def _init(force=False):
     global db, cursor
     if force or db is None:
+        db_info = {
+            'host': os.getenv('DB_HOST'),
+            'db': os.getenv('DB_NAME'),
+            'user': os.getenv('DB_USER'),
+            'passwd': os.getenv('DB_PASSWORD'),
+            'charset': 'utf8'
+        }
         db = pymysql.connect(**db_info)
         cursor = db.cursor(_StableCursor)
 
@@ -34,7 +41,7 @@ def add_msg(id_from, id_to, msg):
         return False
 
     cursor.execute(
-        "INSERT INTO msgs (id_from, id_to, text) values (%s, %s, %s)",
+        'INSERT INTO msgs (id_from, id_to, text) values (%s, %s, %s)',
         (id_from, id_to, msg)
     )
     db.commit()
@@ -43,25 +50,25 @@ def add_msg(id_from, id_to, msg):
 
 def add_user(real_id, social, name, nick):
     if user_exists(real_id, social):
-        logging.debug(f"пользователь уже существует -- ({real_id}, {social})")
+        logging.debug(f'пользователь уже существует -- ({real_id}, {social})')
         return None
 
     uid = utils.generate_uid()
 
     cursor.execute(
-        "INSERT INTO uids (uid, real_id, messengers, name, nick)"
-        "VALUES (%s, %s, %s, %s, %s)",
+        'INSERT INTO uids (uid, real_id, messengers, name, nick)'
+        'VALUES (%s, %s, %s, %s, %s)',
         (uid, real_id, social, name, nick.lower() if nick else None)
     )
     db.commit()
     logging.info('зарегистрирован новый пользователь')
-    logging.debug(f"имя нового пользователя = {uid}")
+    logging.debug(f'имя нового пользователя = {uid}')
     return cursor.lastrowid
 
 
 def set_current(id_from, id_to):
     cursor.execute(
-        "UPDATE uids SET current = %s WHERE id = %s",
+        'UPDATE uids SET current = %s WHERE id = %s',
         (id_to, id_from)
     )
     db.commit()
@@ -69,7 +76,7 @@ def set_current(id_from, id_to):
 
 def wait(id_, waiting):
     cursor.execute(
-        "UPDATE uids SET wait_args = %s WHERE id = %s",
+        'UPDATE uids SET wait_args = %s WHERE id = %s',
         (int(waiting), id_)
     )
     db.commit()
@@ -82,14 +89,14 @@ def update_uid(real_id, social, name=None):
         else:
             uid = name[:20]
             cursor.execute(
-                "SELECT true FROM uids WHERE uid = %s",
+                'SELECT true FROM uids WHERE uid = %s',
                 (uid,)
             )
             if bool(cursor.fetchone()):
                 return None
 
         cursor.execute(
-            "UPDATE uids SET uid = %s WHERE real_id = %s and messengers = %s",
+            'UPDATE uids SET uid = %s WHERE real_id = %s and messengers = %s',
             (uid, real_id, social)
         )
         db.commit()
@@ -98,7 +105,7 @@ def update_uid(real_id, social, name=None):
 
 def get_social(id_):
     cursor.execute(
-        "SELECT messengers FROM uids WHERE id = %s",
+        'SELECT messengers FROM uids WHERE id = %s',
         (id_,)
     )
     return cursor.fetchone()[0]
@@ -107,12 +114,12 @@ def get_social(id_):
 def user_exists(id_, social=None):
     if social is None:
         cursor.execute(
-            "SELECT COUNT(*) FROM uids WHERE uid = %s",
+            'SELECT COUNT(*) FROM uids WHERE uid = %s',
             (id_,)
         )
     else:
         cursor.execute(
-            "SELECT COUNT(*) FROM uids WHERE real_id = %s and messengers = %s",
+            'SELECT COUNT(*) FROM uids WHERE real_id = %s and messengers = %s',
             (id_, social)
         )
     return bool(cursor.fetchone()[0])
@@ -120,14 +127,14 @@ def user_exists(id_, social=None):
 
 def is_waiting(id_):
     cursor.execute(
-        "SELECT wait_args FROM uids WHERE id = %s",
+        'SELECT wait_args FROM uids WHERE id = %s',
         (id_,)
     )
     return bool(cursor.fetchone()[0])
 
 
 def get_name(id_):
-    cursor.execute("SELECT name FROM uids WHERE id = %s", (id_,))
+    cursor.execute('SELECT name FROM uids WHERE id = %s', (id_,))
     result = cursor.fetchone()
     if result is not None:
         return result[0]
@@ -137,10 +144,10 @@ def get_name(id_):
 
 def get_id(id_, social=None, by_nick=False):
     if social is None:
-        cursor.execute("SELECT id FROM uids WHERE uid = %s", (id_,))
+        cursor.execute('SELECT id FROM uids WHERE uid = %s', (id_,))
     else:
         cursor.execute(
-            "SELECT id FROM uids WHERE {key} = %s and messengers = %s"
+            'SELECT id FROM uids WHERE {key} = %s and messengers = %s'
             .format(key=('real_id', 'nick')[by_nick]),
             (id_, social)
         )
@@ -153,12 +160,12 @@ def get_id(id_, social=None, by_nick=False):
 
 
 def get_real_id(id_):
-    cursor.execute("SELECT real_id, messengers FROM uids WHERE id = %s", (id_,))
+    cursor.execute('SELECT real_id, messengers FROM uids WHERE id = %s', (id_,))
     return cursor.fetchone()
 
 
 def get_uid(id_):
-    cursor.execute("SELECT uid FROM uids WHERE id = %s", (id_,))
+    cursor.execute('SELECT uid FROM uids WHERE id = %s', (id_,))
     if cursor.rowcount == 0:
         return None
     else:
@@ -168,20 +175,20 @@ def get_uid(id_):
 def get_cur_con(id_):
     if id_ is None:
         return None
-    cursor.execute("SELECT current FROM uids WHERE id = %s", (id_,))
+    cursor.execute('SELECT current FROM uids WHERE id = %s', (id_,))
     return cursor.fetchone()[0]
 
 
 def get_msgs(id_from, id_to):
     cursor.execute(
-        "SELECT text FROM msgs WHERE id_from = %s and id_to = %s",
+        'SELECT text FROM msgs WHERE id_from = %s and id_to = %s',
         (id_from, id_to)
     )
 
     msgs = tuple(map(lambda msg: msg[0], cursor.fetchall()))
 
     cursor.execute(
-        "DELETE FROM msgs WHERE id_from = %s and id_to = %s",
+        'DELETE FROM msgs WHERE id_from = %s and id_to = %s',
         (id_from, id_to)
     )
     db.commit()
@@ -193,14 +200,14 @@ def get_others(id_to):
     if id_to is None:
         return ()
     cursor.execute(
-        "SELECT name, uid, messengers FROM uids WHERE current = %s",
+        'SELECT name, uid, messengers FROM uids WHERE current = %s',
         (id_to,)
     )
     return cursor.fetchall()
 
 
 def delete_user(id_):
-    cursor.execute("DELETE FROM uids WHERE id = %s", (id_,))
+    cursor.execute('DELETE FROM uids WHERE id = %s', (id_,))
     db.commit()
 
 

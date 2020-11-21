@@ -1,8 +1,8 @@
+import os
 from urllib.request import Request, urlopen
 import json
-from config import keys
 
-NAME = __name__[7:]
+NAME = __name__.split('.')[1]
 
 
 def send_message(real_id, msg, **kwargs):
@@ -23,7 +23,7 @@ def send_message(real_id, msg, **kwargs):
             query['keyboard'] = f.read()
 
     r = Request(api_url, json.dumps(query).encode('utf-8'))
-    r.add_header('X-Viber-Auth-Token', keys['viber'])
+    r.add_header('X-Viber-Auth-Token', os.getenv('VIBER_TOKEN'))
     return urlopen(r)
 
 

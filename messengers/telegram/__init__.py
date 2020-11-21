@@ -1,12 +1,12 @@
+import os
 from urllib.parse import urlencode
 from urllib.request import urlopen
-from config import keys
 
-NAME = __name__[7:]
+NAME = __name__.split('.')[1]
 
 
 def send_message(real_id, msg, **kwargs):
-    api_url = f"https://api.telegram.org/bot{keys[NAME]}/sendMessage?"
+    api_url = f"https://api.telegram.org/bot{os.getenv('TELEGRAM_TOKEN')}/sendMessage?"
     query = {
         'chat_id': real_id,
         'text': msg
