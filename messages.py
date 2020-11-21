@@ -68,7 +68,7 @@ def execute_cmd(msg_data):
 
             if messenger in messengers.modules:
                 id_to = storage.get_id(real_id_to, messenger) or \
-                         storage.get_id(real_id_to, messenger, by_nick=True)
+                    storage.get_id(real_id_to, messenger, by_nick=True)
 
                 if id_to is None:
                     send(id_from, strings.INVALID_USER)
