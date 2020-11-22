@@ -1,3 +1,4 @@
+import os
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
@@ -8,10 +9,10 @@ NAME = __name__.split('.')[1]
 
 def send_message(real_id, msg, **kwargs):
     """Describe sending in this function"""
-    api_url = f"https://api.example.org/send?"  # 1. Put api url
+    api_url = 'https://api.example.org/send?'  # 1. Put api url
     query = {  # 2. Set options
         'to': real_id,
-        'token': keys[NAME],
+        'token': os.getenv('MY_TOKEN'),
         'text': msg
     }
     if 'keyboard' in kwargs:
