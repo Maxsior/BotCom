@@ -4,11 +4,12 @@ import ruamel.yaml as yaml
 
 locales = {}
 
+default = 'ru'
+
 
 def format(loc: str, key: str, /, **kwargs: str) -> str:
-    default = locales['ru']
-    locale = locales.get(loc, default)
-    return locale[key].format(**kwargs)
+    locale = locales.get(loc, locales[default])
+    return locale.get(key, locales[default][key]).format(**kwargs)
 
 
 def _update_locales():

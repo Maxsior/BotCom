@@ -5,6 +5,17 @@ HELP: >
 
   To see full help send /help.
 
+FULL_HELP: |
+  List of available commands:
+  - /reg, /start -- get new identifier.
+  - /conn ID SOCIAL, /chat ID SOCIAL, where
+   SOCIAL - messenger (vk, telegram и т.д.)
+   ID - identifier of friend in messenger.
+  - /status -- information about your account and current connections.
+  - /close, /off -- disconnect from dialog.
+  - /unreg, /del, /delete -- delete your BotCom account.
+  - /help -- print this messege.
+
 STATUS: |
   Currently connected with {name} ({current})
   Others: {others}
