@@ -3,7 +3,7 @@ HELP: >
 
   Currently only text messages are supported for vk, telegram, viber.
 
-  To see full help send /help.
+  For more information send /help.
 
 FULL_HELP: |
   List of available commands:
@@ -14,7 +14,7 @@ FULL_HELP: |
   - /status -- information about your account and current connections.
   - /close, /off -- disconnect from dialog.
   - /unreg, /del, /delete -- delete your BotCom account.
-  - /help -- print this messege.
+  - /help -- print this message.
 
 STATUS: |
   Currently connected with {name} ({current})
