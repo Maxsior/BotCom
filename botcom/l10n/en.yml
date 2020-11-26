@@ -1,0 +1,52 @@
+HELP: >
+  BotCom helps send messages across different messengers and social networks.
+
+  Currently only text messages are supported for vk, telegram, viber.
+
+  For more information send /help.
+
+FULL_HELP: |
+  List of available commands:
+  - /reg, /start -- get new identifier.
+  - /conn ID SOCIAL, /chat ID SOCIAL, where
+   SOCIAL - messenger (vk, telegram и т.д.)
+   ID - identifier of friend in messenger.
+  - /status -- information about your account and current connections.
+  - /close, /off -- disconnect from dialog.
+  - /unreg, /del, /delete -- delete your BotCom account.
+  - /help -- print this message.
+
+STATUS: |
+  Currently connected with {name} ({current})
+  Others: {others}
+
+NO_RECIPIENT: >
+  No recipient! Please, send /conn ID SOCIAL to connect somebody
+
+INVALID_USER: Specified user is not registered in BotCom!
+
+REGISTER: Hooray! Your BotCom account is activated! Now you can send/receive messeges
+
+CONNECTED: Connected with {name}!
+
+CONN_NOTIFICATION: >
+  {name} from {messenger} is trying to contact you.
+  To start a conversation send /conn {id} {messenger}.
+
+CONN_WAIT: Waiting for connection from {name} from {messenger}
+
+WAIT_FOR_PARAMS: >
+  Waiting for parameters...
+  Send id and messenger name separated by a space
+
+NO_SOCIAL: Specified messenger is not supported by BotCom yet or does not exist
+
+BYE: Your BotCom account from {messenger} successfully disactivated
+
+OFF: You are successfully disconnected
+
+OFF_BLANK: You are already disconnected
+
+FRIEND_OFF: Your companion has been disconnected
+
+UNDEFINED_CMD: Unknown command! To list available commands send /help

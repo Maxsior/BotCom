@@ -1,6 +1,6 @@
 import messengers
 import storage
-import strings
+import l10n
 
 
 def _is_reg_cmd(msg):
@@ -25,19 +25,17 @@ def _cmd_connect(id_from, id_to):
     social_to = storage.get_social(id_to)
 
     if storage.get_cur_con(id_to) == id_from:
-        send(id_from, strings.CONNECTED.format(name=name_to))
-        send(id_to, strings.CONNECTED.format(name=name_from))
+        send(id_from, l10n.format('ru', 'CONNECTED', name=name_to))
+        send(id_to, l10n.format('ru', 'CONNECTED', name=name_from))
     else:
-        send(id_from, strings.CONN_WAIT.format(name=name_to,
-                                               messenger=social_to))
-        send(id_to, strings.CONN_NOTIFICATION.format(name=name_from,
-                                                     id=id_from,
-                                                     messenger=social_from))
+        send(id_from, l10n.format('ru', 'CONN_WAIT', name=name_to, messenger=social_to))
+        send(id_to, l10n.format('ru', 'CONN_NOTIFICATION', name=name_from,
+                                id=id_from, messenger=social_from))
 
     msgs = storage.get_msgs(id_to, id_from)
     if len(msgs) > 0:
         for msg in msgs:
-            msg = strings.MSG.format(name=name_to, msg=msg)
+            msg = l10n.format('ru', 'MSG', name=name_to, msg=msg)
             send(id_from, msg)
 
 
@@ -49,17 +47,17 @@ def execute_cmd(msg_data):
         id_from, existed = _cmd_registration(**msg_data)
 
         if not existed:
-            send(id_from, strings.HELP)
+            send(id_from, l10n.format('ru', 'HELP'))
             send(id_from, '---', keyboard='main')
 
-        send(id_from, strings.REGISTER)
+        send(id_from, l10n.format('ru', 'REGISTER'))
 
     elif msg.startswith(('/conn', '/chat', '/подкл', '/подключиться', '/чат')):
         args = msg.split()
         size = len(args)
         if size == 1:
             storage.wait(id_from, True)
-            send(id_from, strings.WAIT_FOR_PARAMS)
+            send(id_from, l10n.format('ru', 'WAIT_FOR_PARAMS'))
         else:
             storage.wait(id_from, False)
 
@@ -71,14 +69,14 @@ def execute_cmd(msg_data):
                         storage.get_id(real_id_to, messenger, by_nick=True)
 
                 if id_to is None:
-                    send(id_from, strings.INVALID_USER)
+                    send(id_from, l10n.format('ru', 'INVALID_USER'))
                 else:
                     _cmd_connect(id_from, id_to)
             else:
-                send(id_from, strings.NO_SOCIAL)
+                send(id_from, l10n.format('ru', 'NO_SOCIAL'))
 
     elif msg.startswith(('/unreg', '/del', '/delete', '/удалить_аккаунт')):
-        send(id_from, strings.BYE.format(messenger=msg_data['messengers']),
+        send(id_from, l10n.format('ru', 'BYE', messenger=msg_data['messengers']),
              keyboard='reset')
         storage.delete_user(id_from)
 
@@ -86,13 +84,13 @@ def execute_cmd(msg_data):
         id_to = storage.get_cur_con(id_from)
         if id_to is not None:
             storage.set_current(id_from, None)
-            send(id_to, strings.FRIEND_OFF)
-            send(id_from, strings.OFF)
+            send(id_to, l10n.format('ru', 'FRIEND_OFF'))
+            send(id_from, l10n.format('ru', 'OFF'))
         else:
-            send(id_from, strings.OFF_BLANK)
+            send(id_from, l10n.format('ru', 'OFF_BLANK'))
 
     elif msg.startswith(('/help', '/помощь')):
-        for part in strings.FULL_HELP.split('<--->'):
+        for part in l10n.format('ru', 'FULL_HELP').split('<--->'):
             send(id_from, part)
 
     elif msg.startswith(('/status', '/статус')):
@@ -107,11 +105,11 @@ def execute_cmd(msg_data):
                 lambda u: f"{u[0]} ({u[1]} {u[2]})", others)
             )
 
-        send(id_from, strings.STATUS.format(name=name, current=conn_id,
-                                            others=others_s))
+        send(id_from, l10n.format('ru', 'STATUS', name=name,
+                                  current=conn_id, others=others_s))
 
     else:
-        send(id_from, strings.UNDEFINED_CMD)
+        send(id_from, l10n.format('ru', 'UNDEFINED_CMD'))
 
 
 def send(id_to, msg, **kwargs):
@@ -138,15 +136,12 @@ def forward(msg_data):
         id_to = storage.get_cur_con(id_from)
 
         if id_to is None:
-            send(id_from, strings.NO_RECIPIENT)
+            send(id_from, l10n.format('ru', 'NO_RECIPIENT'))
             return
 
         if id_from != storage.get_cur_con(id_to):
             storage.add_msg(id_from, id_to, msg_data['msg'])
         else:
             name = msg_data.get('name') or storage.get_name(id_from)
-            msg = strings.MSG.format(
-                name=name,
-                msg=msg_data['msg']
-            )
+            msg = l10n.format('ru', 'MSG', name=name, msg=msg_data['msg'])
             send(id_to, msg)
