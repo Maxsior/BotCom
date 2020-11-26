@@ -2,6 +2,8 @@ import logging
 from flask import Flask, request, abort, send_file
 import messengers
 from dtos import User
+import l10n
+from storage import Storage
 
 app = Flask(__name__,
             static_url_path='/',
@@ -19,11 +21,12 @@ def main(messenger):
     messenger_from = messengers.get_class(messenger)
     msg = messenger_from.parse(data)
 
-    receiver: User = Storage.get_receiver(msg.sender.id)
+    receiver: User = Storage.get_receiver_id(msg.sender.id)
     messenger_to = messengers.get_class(receiver.messenger)
 
     if messenger_to is None:
-        messenger_from.send(msg.sender.id, MESSENGER_NOT_FOUND)
+        messenger_from.send(msg.sender.id, l10n.format('ru', 'MESSAGER_NOT_FOUND'))
+        abort(404)
         return
 
     # if detect_cmd(msg):

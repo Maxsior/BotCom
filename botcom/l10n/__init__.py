@@ -18,7 +18,7 @@ def _update_locales():
     for fname in iglob(path.join(base, '*.yml')):
         with open(fname, 'tr') as f:
             locale = path.splitext(path.basename(fname))[0]
-            locales[locale] = yaml.safe_load(f)
+            locales[locale] = yaml.load(f)
 
 
 _update_locales()
