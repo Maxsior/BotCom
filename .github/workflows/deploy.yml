@@ -17,5 +17,6 @@ jobs:
         curl -fsSL https://get.deta.dev/cli.sh | sh
     - name: Deploy
       run: |
+        deta new -p botcom
+        cp requirements.txt botcom/
         deta deploy botcom
-
