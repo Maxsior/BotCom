@@ -3,10 +3,17 @@ import random
 import json
 from urllib.parse import urlencode
 from urllib.request import urlopen
+
+from dtos import Message
 from messengers import Messenger
 
 
 class Vk(Messenger):
+    @staticmethod
+    def is_cmd(msg: Message):
+        # TODO check messages with mention
+        return msg.text.startswith('/')
+
     @staticmethod
     def send(real_id, msg, **kwargs):
         api_url = 'https://api.vk.com/method/messages.send?'

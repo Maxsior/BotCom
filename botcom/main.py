@@ -1,8 +1,9 @@
 import logging
-from flask import Flask, request, abort, send_file
-import messengers
+from flask import Flask, request, abort
+from messengers import Messenger
 from dtos import User
-import l10n
+# import l10n
+from commands import Command
 from storage import Storage
 
 app = Flask(__name__,
@@ -15,32 +16,33 @@ logger.setLevel(logging.INFO)
 
 @app.route('/<string:messenger>', methods=['POST'])
 def main(messenger):
-    logger.info(f'request to "{messenger}"')
-    data = request.json
+    messenger_from = Messenger.get_instance(messenger)
 
-    messenger_from = messengers.get_class(messenger)
-    msg = messenger_from.parse(data)
-
-    receiver: User = Storage.get_receiver_id(msg.sender.id)
-    messenger_to = messengers.get_class(receiver.messenger)
-
-    if messenger_to is None:
-        messenger_from.send(msg.sender.id, l10n.format('ru', 'MESSAGER_NOT_FOUND'))
+    if messenger_from is None:
         abort(404)
         return
 
-    # if detect_cmd(msg):
-    #     cmd = <build command by msg>
-    #     cmd.execute()
-    #     return
-    # else:
+    msg = messenger_from.parse(request.json)
 
-    messenger_to.send(receiver.id, msg)
+    if Storage.get_user(msg.sender) is None:
+        Storage.add_user(msg.sender)
+        messenger_from.send(msg.sender.id, None)
+        return 'ok'
 
+    if messenger_from.is_cmd(msg):
+        cmd = Command()
+        cmd.execute()
+        return 'ok'
 
-@app.route('/', methods=['GET'])
-def site():
-    return send_file('../pages/index.html')
+    receiver: User = Storage.get_receiver_id(msg.sender.id)
+
+    if receiver is None:
+        messenger_from.send(msg.sender.id, None)
+    else:
+        messenger_to = Messenger.get_instance(receiver.messenger)
+        messenger_to.send(receiver.id, msg)
+
+    return 'ok'
 
 
 if __name__ == '__main__':

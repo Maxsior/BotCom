@@ -2,9 +2,14 @@ import os
 from urllib.request import Request, urlopen
 import json
 from messengers import Messenger
+from dtos import Message
 
 
 class Viber(Messenger):
+    @staticmethod
+    def is_cmd(msg: Message):
+        return msg.text.startswith('/')
+
     @staticmethod
     def send(real_id, msg, **kwargs):
         api_url = 'https://chatapi.viber.com/pa/send_message'

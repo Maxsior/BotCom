@@ -2,9 +2,14 @@ import os
 from urllib.parse import urlencode
 from urllib.request import urlopen
 from messengers import Messenger
+from dtos import Message
 
 
 class Telegram(Messenger):
+    @staticmethod
+    def is_cmd(msg: Message):
+        return msg.text.startswith('/')
+
     @staticmethod
     def send(real_id, msg, **kwargs):
         api_url = f"https://api.telegram.org/bot{os.getenv('TELEGRAM_TOKEN')}/sendMessage?"

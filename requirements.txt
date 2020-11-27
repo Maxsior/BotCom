@@ -1,6 +1,7 @@
 attrs==20.3.0
 click==7.1.2
 coverage==5.3
+deta==0.7
 flake8==3.8.4
 Flask==1.1.2
 iniconfig==1.1.1
@@ -13,7 +14,6 @@ pluggy==0.13.1
 py==1.9.0
 pycodestyle==2.6.0
 pyflakes==2.2.0
-PyMySQL==0.10.1
 pyparsing==2.4.7
 pytest==6.1.2
 pytest-cov==2.10.1
