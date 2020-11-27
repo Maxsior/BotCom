@@ -1,10 +1,10 @@
 import logging
 from flask import Flask, request, abort
 from messengers import Messenger
-from dtos import User
-# import l10n
 from commands import Command
 from storage import Storage
+from dtos import User
+# import l10n
 
 app = Flask(__name__,
             static_url_path='/',
@@ -24,14 +24,14 @@ def main(messenger):
 
     msg = messenger_from.parse(request.json)
 
-    if Storage.get_user(msg.sender) is None:
+    if Storage.find_user(msg.sender.messenger, msg.sender.id) is None:
         Storage.add_user(msg.sender)
         messenger_from.send(msg.sender.id, None)
         return 'ok'
 
-    if messenger_from.is_cmd(msg):
-        cmd = Command()
-        cmd.execute()
+    if msg.cmd is not None:
+        cmd = Command.get_instance(msg.cmd.name)(messenger_from, msg)
+        cmd.execute(*msg.cmd.args)
         return 'ok'
 
     receiver: User = Storage.get_receiver_id(msg.sender.id)
