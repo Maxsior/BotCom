@@ -1,5 +1,6 @@
 attrs==20.3.0
 click==7.1.2
+coverage==5.3
 flake8==3.8.4
 Flask==1.1.2
 iniconfig==1.1.1
@@ -15,6 +16,7 @@ pyflakes==2.2.0
 PyMySQL==0.10.1
 pyparsing==2.4.7
 pytest==6.1.2
+pytest-cov==2.10.1
 python-dotenv==0.15.0
 ruamel.yaml==0.16.12
 ruamel.yaml.clib==0.2.2
