@@ -1,0 +1,21 @@
+name: deploy
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      DETA_ACCESS_TOKEN: ${{ secrets.DETA_ACCESS_TOKEN }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Deta CLI
+      run: |
+        curl -fsSL https://get.deta.dev/cli.sh | sh
+    - name: Deploy
+      run: |
+        deta deploy botcom
+

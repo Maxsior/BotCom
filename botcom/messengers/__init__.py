@@ -8,12 +8,12 @@ class Messenger(ABC):
     @staticmethod
     @abstractmethod
     def send(id_to: Union[str, int], msg: Message):
-        raise NotImplemented()
+        raise NotImplementedError
 
     @staticmethod
     @abstractmethod
     def parse(data) -> Message:
-        raise NotImplemented()
+        raise NotImplementedError
 
 
 def get_class(name: str) -> Optional[Messenger]:
