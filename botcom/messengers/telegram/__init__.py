@@ -36,7 +36,8 @@ class Telegram(Messenger):
                 id=msg['chat']['id'],
                 name=name,
                 messenger='telegram',
-                nick=msg['from']['username']
+                nick=msg['from']['username'],
+                lang=msg['from']['language_code']
             )
 
             return Message(

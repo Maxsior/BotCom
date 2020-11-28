@@ -9,6 +9,7 @@ class User:
     messenger: str
     nick: str = None
     phone: str = None
+    lang: str = None
 
 
 @dataclass
@@ -19,7 +20,7 @@ class CommandInfo:
 
 @dataclass
 class Message:
-    sender: User
     text: str = ''
-    cmd: Optional[CommandInfo] = None
     attachments: List = field(default_factory=list)
+    cmd: Optional[CommandInfo] = None
+    sender: Optional[User] = None
