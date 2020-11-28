@@ -30,8 +30,8 @@ def main(messenger):
         return 'ok'
 
     if msg.cmd is not None:
-        cmd = Command.get_instance(msg.cmd.name)(messenger_from, msg)
-        cmd.execute(*msg.cmd.args)
+        cmd_class = Command.get_class(msg.cmd.name)
+        cmd_class(msg).execute()
         return 'ok'
 
     receiver: User = Storage.get_receiver_id(msg.sender.id)
