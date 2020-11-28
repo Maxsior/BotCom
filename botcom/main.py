@@ -1,8 +1,8 @@
 import logging
 from flask import Flask, request, abort
 from messengers import Messenger
-from commands import Command
 from storage import Storage
+import commands
 from dtos import User
 # import l10n
 
@@ -30,7 +30,7 @@ def main(messenger):
         return 'ok'
 
     if msg.cmd is not None:
-        cmd_class = Command.get_class(msg.cmd.name)
+        cmd_class = commands.get_class(msg.cmd.name)
         cmd_class(msg).execute()
         return 'ok'
 

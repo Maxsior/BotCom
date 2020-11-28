@@ -1,4 +1,4 @@
-from commands import Command
+from commands.base import Command
 from messengers import Messenger
 from storage import Storage
 

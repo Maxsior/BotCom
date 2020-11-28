@@ -12,7 +12,7 @@ class User:
 
 
 @dataclass
-class Command:
+class CommandInfo:
     name: str
     args: List[str]
 
@@ -21,6 +21,6 @@ class Command:
 class Message:
     sender: User
     text: str = ''
-    cmd: Command = None
+    cmd: CommandInfo = None
     attachments: List = field(default_factory=list)
 

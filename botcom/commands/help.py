@@ -1,6 +1,8 @@
-from commands import Command
+from commands.base import Command
+from messengers import Messenger
 
 
 class HelpCommand(Command):
     def execute(self):
-        self.messenger.send(self.msg.sender.id, None)
+        messenger = Messenger.get_instance(self.msg.sender.messenger)
+        messenger.send(self.msg.sender.id, None)

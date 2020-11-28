@@ -1,6 +1,3 @@
-from abc import ABC, abstractmethod
-from dtos import Message
-
 from commands.wrong_cmd import WrongCmdCommand
 from commands.chat import ChatCommand
 from commands.help import HelpCommand
@@ -22,14 +19,5 @@ commands = {
 }
 
 
-class Command(ABC):
-    def __init__(self, msg: Message):
-        self.msg = msg
-
-    @abstractmethod
-    def execute(self):
-        raise NotImplementedError
-
-    @staticmethod
-    def get_class(name: str):
-        return commands.get(name, WrongCmdCommand)
+def get_class(name: str):
+    return commands.get(name, WrongCmdCommand)

@@ -28,6 +28,7 @@ class Storage:
                 'messenger': messenger
             },
             {
+                # TODO format phone
                 'phone': id_,
                 'messenger': messenger
             }
