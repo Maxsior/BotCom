@@ -5,10 +5,10 @@ from typing import List
 @dataclass
 class User:
     id: str
-    nick: str
-    phone: str
     name: str
     messenger: str
+    nick: str = None
+    phone: str = None
 
 
 @dataclass
@@ -23,4 +23,3 @@ class Message:
     text: str = ''
     cmd: CommandInfo = None
     attachments: List = field(default_factory=list)
-
