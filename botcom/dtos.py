@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Optional
 
 
 @dataclass
@@ -21,5 +21,5 @@ class CommandInfo:
 class Message:
     sender: User
     text: str = ''
-    cmd: CommandInfo = None
+    cmd: Optional[CommandInfo] = None
     attachments: List = field(default_factory=list)

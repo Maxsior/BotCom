@@ -23,6 +23,8 @@ def main(messenger):
         return
 
     msg = messenger_from.parse(request.json)
+    if msg is None:
+        return 'ok'
 
     if Storage.find_user(msg.sender.messenger, msg.sender.id) is None:
         Storage.add_user(msg.sender)

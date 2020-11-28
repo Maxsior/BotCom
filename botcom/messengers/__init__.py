@@ -1,23 +1,23 @@
 import importlib
 from abc import ABC, abstractmethod
-from typing import Union
-from dtos import Message
+from typing import Union, Optional
+from dtos import Message, User
 
 
 class Messenger(ABC):
     @staticmethod
     @abstractmethod
-    def is_cmd(msg: Message):
+    def send(id_to: User, msg: Message):
         raise NotImplementedError
 
     @staticmethod
     @abstractmethod
-    def send(id_to: Union[str, int], msg: Message):
+    def parse(data) -> Optional[Message]:
         raise NotImplementedError
 
     @staticmethod
     @abstractmethod
-    def parse(data) -> Message:
+    def parse_cmd(msg):
         raise NotImplementedError
 
     @staticmethod
