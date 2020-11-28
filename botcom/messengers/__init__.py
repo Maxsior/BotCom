@@ -1,13 +1,13 @@
 import importlib
 from abc import ABC, abstractmethod
-from typing import Union, Optional
-from dtos import Message, User
+from typing import Optional
+from dtos import Message
 
 
 class Messenger(ABC):
     @staticmethod
     @abstractmethod
-    def send(id_to: User, msg: Message):
+    def send(id_to: str, msg: Message):
         raise NotImplementedError
 
     @staticmethod
