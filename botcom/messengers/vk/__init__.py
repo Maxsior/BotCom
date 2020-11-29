@@ -1,6 +1,7 @@
 import os
 import random
 import json
+from flask import abort, Response
 from urllib.parse import urlencode
 from urllib.request import urlopen
 from entities import Message, User, CommandInfo
@@ -16,7 +17,7 @@ class Vk(Messenger):
             'message': msg.text,
             'access_token': os.getenv('VK_TOKEN'),
             'random_id': random.randint(0, 2**32),
-            'v': 5.92
+            'v': 5.126
         }
 
         # if 'keyboard' in kwargs:
@@ -31,14 +32,16 @@ class Vk(Messenger):
     def parse(data):
         data_type = data['type']
         if data_type == 'message_new':
-            msg = data['object']
+            msg = data['object']['message']
+            client_info = data['object']['client_info']
 
             name, nick = Vk._get_info(msg['from_id'])
             user = User(
                 id=msg['from_id'],
                 name=name,
                 messenger='vk',
-                nick=nick
+                nick=nick,
+                lang=Vk._get_lang(client_info['lang_id'])
             )
 
             return Message(
@@ -48,7 +51,7 @@ class Vk(Messenger):
                 attachments=[]  # TODO attachments
             )
         elif data_type == 'confirmation' and data.get('group_id') == 176977577:
-            return os.getenv('VK_CONFIRMATION')
+            abort(Response(os.getenv('VK_CONFIRMATION')))
         else:
             return None
 
@@ -76,9 +79,23 @@ class Vk(Messenger):
             'user_ids': real_id,
             'fields': 'domain',
             'access_token': os.getenv('VK_TOKEN'),
-            'v': 5.92
+            'v': 5.126
         })
         api_url += query
         with urlopen(api_url) as res:
             result = json.loads(res.read().decode('utf-8'))['response'][0]
         return result['first_name'] + ' ' + result['last_name'], result['domain']
+
+    @staticmethod
+    def _get_lang(lang_id: int):
+        # see https://vk.com/dev/api_requests for language id list
+        return [
+            'ru',
+            'uk',
+            'be',
+            'en',
+            'es',
+            'fi',
+            'de',
+            'it'
+        ][lang_id]

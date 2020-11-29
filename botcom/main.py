@@ -42,6 +42,7 @@ def main(messenger):
     else:
         receiver = Storage().get_user(msg.sender.receiver)
         messenger_to = Messenger.get_instance(receiver.messenger)
+        msg.text = l10n.format('', 'MSG', name=msg.sender.name, msg=msg.text)
         messenger_to.send(receiver.id, msg)
 
     return 'ok'

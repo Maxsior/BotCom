@@ -11,7 +11,7 @@ class ChatCommand(Command):
         sender = self.msg.sender
         messenger_from = Messenger.get_instance(sender.messenger)
 
-        receiver = Storage().get_user(sender.receiver)
+        receiver = Storage().find_user(messenger, id_)
 
         if receiver is None:
             messenger_from.send(sender.id, Message(
