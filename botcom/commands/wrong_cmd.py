@@ -8,5 +8,6 @@ class WrongCmdCommand(Command):
     def execute(self):
         sender = self.msg.sender
 
-        messenger_from = Messenger.get_instance(sender.messenger)
-        messenger_from.send(sender.id, Message(l10n.format(sender.lang, 'UNDEFINED_CMD')))
+        if sender.registered:
+            messenger_from = Messenger.get_instance(sender.messenger)
+            messenger_from.send(sender.id, Message(l10n.format(sender.lang, 'UNDEFINED_CMD')))

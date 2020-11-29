@@ -25,7 +25,7 @@ def main(messenger):
     if msg is None:
         return 'ok'
 
-    if msg.sender.is_registered is None:
+    if not msg.sender.registered:
         Storage().add_user(msg.sender)
         messenger_from.send(msg.sender.id, Message(l10n.format(msg.sender.lang, 'REGISTER')))
 
@@ -37,11 +37,10 @@ def main(messenger):
         cmd_class(msg).execute()
         return 'ok'
 
-    receiver = Storage().get_user(msg.sender.id)
-
-    if receiver is None:
+    if msg.sender.receiver is None:
         messenger_from.send(msg.sender.id, Message(l10n.format(msg.sender.lang, 'NO_RECIPIENT')))
     else:
+        receiver = Storage().get_user(msg.sender.receiver)
         messenger_to = Messenger.get_instance(receiver.messenger)
         messenger_to.send(receiver.id, msg)
 

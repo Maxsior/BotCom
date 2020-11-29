@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, InitVar
 from typing import List, Optional
 from storage import Storage
 
@@ -11,19 +11,21 @@ class User:
     nick: Optional[str] = None
     phone: Optional[str] = None
     lang: Optional[str] = None
-    key: Optional[str] = field(init=False, default=None)
-    receiver: Optional[str] = field(init=False, default=None)
+    key: Optional[str] = None
+    receiver: Optional[str] = None
+    refine: InitVar[bool] = True
 
     @property
-    def is_registered(self):
+    def registered(self):
         return self.key is not None
 
-    def __post_init__(self):
-        user = Storage().find_user(self.messenger, self.id)
-        if user:
-            self.key = user.key
-            self.lang = user.lang or self.lang
-            self.receiver = user.receiver
+    def __post_init__(self, refine):
+        if refine:
+            user = Storage().find_user(self.messenger, self.id)
+            if user:
+                self.key = user.key
+                self.lang = user.lang or self.lang
+                self.receiver = user.receiver
 
 
 @dataclass
