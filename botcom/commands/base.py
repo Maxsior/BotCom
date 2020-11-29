@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from dtos import Message
+from entities import Message
 
 
 class Command(ABC):

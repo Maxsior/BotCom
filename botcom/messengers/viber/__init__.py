@@ -2,7 +2,7 @@ import os
 from urllib.request import Request, urlopen
 import json
 from messengers import Messenger
-from dtos import Message
+from entities import Message
 
 
 class Viber(Messenger):

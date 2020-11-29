@@ -1,5 +1,5 @@
 from messengers import Messenger
-from dtos import Message, User
+from entities import Message, User
 
 
 class Discord(Messenger):

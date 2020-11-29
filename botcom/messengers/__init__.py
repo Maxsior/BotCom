@@ -1,7 +1,7 @@
 import importlib
 from abc import ABC, abstractmethod
 from typing import Optional
-from dtos import Message
+from entities import Message
 
 
 class Messenger(ABC):

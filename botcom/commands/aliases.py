@@ -1,4 +1,4 @@
-from dtos import Message, CommandInfo
+from entities import Message, CommandInfo
 from commands.chat import ChatCommand
 
 

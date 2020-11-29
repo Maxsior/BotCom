@@ -1,15 +1,13 @@
 import logging
 from flask import Flask, request, abort
 from typing import Optional
-from dtos import User, Message
+from entities import Message
 from messengers import Messenger
 from storage import Storage
 import commands
 import l10n
 
-app = Flask(__name__,
-            static_url_path='/',
-            static_folder='../pages')
+app = Flask(__name__)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -27,17 +25,19 @@ def main(messenger):
     if msg is None:
         return 'ok'
 
-    if Storage.find_user(msg.sender.messenger, msg.sender.id) is None:
-        Storage.add_user(msg.sender)
+    if msg.sender.is_registered is None:
+        Storage().add_user(msg.sender)
         messenger_from.send(msg.sender.id, Message(l10n.format(msg.sender.lang, 'REGISTER')))
-        return 'ok'
+
+        if msg.cmd is None:
+            return 'ok'
 
     if msg.cmd is not None:
         cmd_class = commands.get_class(msg.cmd.name)
         cmd_class(msg).execute()
         return 'ok'
 
-    receiver: User = Storage.get_receiver_id(msg.sender.id)
+    receiver = Storage().get_user(msg.sender.id)
 
     if receiver is None:
         messenger_from.send(msg.sender.id, Message(l10n.format(msg.sender.lang, 'NO_RECIPIENT')))

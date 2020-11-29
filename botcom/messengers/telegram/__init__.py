@@ -2,7 +2,7 @@ import os
 from urllib.parse import urlencode
 from urllib.request import urlopen
 from messengers import Messenger
-from dtos import Message, User, CommandInfo
+from entities import Message, User, CommandInfo
 
 
 class Telegram(Messenger):

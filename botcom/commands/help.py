@@ -1,6 +1,6 @@
 from commands.base import Command
 from messengers import Messenger
-from dtos import Message
+from entities import Message
 import l10n
 
 

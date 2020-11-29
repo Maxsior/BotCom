@@ -1,24 +1,29 @@
 import os
 from deta import Deta
 from dataclasses import asdict
-from dtos import User
+from typing import Dict, Union
+import entities
 
 
 class Storage:
-    deta = Deta(os.getenv('DETA_PROJECT_KEY'))
-    users = deta.Base('users')
+    __instance = False
 
-    @staticmethod
-    def get_receiver_id(sender_id):
-        return Storage.users.get(sender_id)['current']
+    def __new__(cls):
+        if not cls.__instance:
+            cls.__instance = super().__new__(cls)
+            deta = Deta(os.getenv('DETA_PROJECT_KEY'))
+            cls.__instance.users = deta.Base('users')
+        return cls
 
-    @staticmethod
-    def add_user(user: User):
-        return Storage.users.put(asdict(user))
+    def add_user(self, user: 'entities.User'):
+        return self.users.put(asdict(user))
 
-    @staticmethod
-    def find_user(messenger: str, id_: str):
-        users = next(Storage.users.fetch([
+    def get_user(self, key) -> 'entities.User':
+        user_db = self.users.get(key)
+        return entities.User(**user_db)
+
+    def find_user(self, messenger: str, id_: str) -> 'entities.User':
+        users = next(self.users.fetch([
             {
                 'id': id_,
                 'messenger': messenger
@@ -33,8 +38,7 @@ class Storage:
                 'messenger': messenger
             }
         ]))
-        return users[0] if users else None
+        return entities.User(**users[0]) if users else None
 
-    @staticmethod
-    def update_receiver(sender_key: str, receiver_key: str):
-        return Storage.users.update({"receiver": receiver_key}, sender_key)
+    def update(self, key: str, updates: Dict[str, Union[str, None]]):
+        return self.users.update(updates, key)

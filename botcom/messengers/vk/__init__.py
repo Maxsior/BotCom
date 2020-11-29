@@ -3,8 +3,7 @@ import random
 import json
 from urllib.parse import urlencode
 from urllib.request import urlopen
-
-from dtos import Message, User, CommandInfo
+from entities import Message, User, CommandInfo
 from messengers import Messenger
 
 
