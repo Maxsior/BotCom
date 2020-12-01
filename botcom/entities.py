@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field, InitVar
 from typing import List, Optional
-from storage import Storage
+import storage
 
 
 @dataclass
@@ -21,7 +21,7 @@ class User:
 
     def __post_init__(self, refine):
         if refine:
-            user = Storage().find_user(self.messenger, self.id)
+            user = storage.Storage().find_user(self.messenger, self.id)
             if user:
                 self.key = user.key
                 self.lang = user.lang or self.lang

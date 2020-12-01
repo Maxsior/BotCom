@@ -44,3 +44,13 @@ class Storage:
 
     def update(self, key: str, updates: Dict[str, Union[str, None]]):
         return self.users.update(updates, key)
+
+    def get_connected(self, key: str):
+        users = next(self.users.fetch({
+            'receiver': key,
+        }))
+
+        return [entities.User(**user, refine=False) for user in users]
+
+    def delete(self, key):
+        return self.users.delete(key)

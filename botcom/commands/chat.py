@@ -7,9 +7,14 @@ import l10n
 
 class ChatCommand(Command):
     def execute(self):
-        messenger, id_ = self.msg.cmd.args
         sender = self.msg.sender
         messenger_from = Messenger.get_instance(sender.messenger)
+
+        if len(self.msg.cmd.args) < 2:
+            messenger_from.send(sender.id, Message(l10n.format(sender.lang, 'WRONG_ARGS')))
+            return
+
+        messenger, id_ = self.msg.cmd.args
 
         receiver = Storage().find_user(messenger, id_)
 

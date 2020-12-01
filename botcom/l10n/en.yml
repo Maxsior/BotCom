@@ -49,4 +49,8 @@ OFF_BLANK: You are already disconnected
 
 FRIEND_OFF: Your companion has been disconnected
 
+FRIEND_UNREG: Your companion account has been deleted
+
+LANG_CHANGED: Your language is English now
+
 UNDEFINED_CMD: Unknown command! To list available commands send /help

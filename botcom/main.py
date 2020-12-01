@@ -39,11 +39,20 @@ def main(messenger):
 
     if msg.sender.receiver is None:
         messenger_from.send(msg.sender.id, Message(l10n.format(msg.sender.lang, 'NO_RECIPIENT')))
-    else:
-        receiver = Storage().get_user(msg.sender.receiver)
-        messenger_to = Messenger.get_instance(receiver.messenger)
-        msg.text = l10n.format('', 'MSG', name=msg.sender.name, msg=msg.text)
-        messenger_to.send(receiver.id, msg)
+        return 'ok'
+
+    receiver = Storage().get_user(msg.sender.receiver)
+    if receiver.receiver != msg.sender.key:
+        messenger_from.send(msg.sender.id, Message(l10n.format(
+            msg.sender.lang, 'CONN_WAIT',
+            name=receiver.name,
+            messenger=receiver.messenger
+        )))
+        return 'ok'
+
+    messenger_to = Messenger.get_instance(receiver.messenger)
+    msg.text = l10n.format('', 'MSG', name=msg.sender.name, msg=msg.text)
+    messenger_to.send(receiver.id, msg)
 
     return 'ok'
 

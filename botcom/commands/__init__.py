@@ -1,7 +1,11 @@
 from commands.wrong_cmd import WrongCmdCommand
 from commands.chat import ChatCommand
 from commands.help import HelpCommand
-from commands.aliases import ChatCommandAlias
+from commands.off import OffCommand
+from commands.unreg import UnregCommand
+# from commands.status import StatusCommand
+from commands.lang import LangCommand
+from commands.chat_alias import ChatCommandAlias
 
 commands = {
     # TODO get list of messengers dynamically
@@ -12,10 +16,10 @@ commands = {
     # ...
     'chat': ChatCommand,
     'help': HelpCommand,
-    # 'off': OffCommand,
-    # 'unreg': UnregCommand,
     # 'status': StatusCommand,
-    # 'lang': LangCommand,
+    'lang': LangCommand,
+    'off': OffCommand,
+    'unreg': UnregCommand,
 }
 
 
