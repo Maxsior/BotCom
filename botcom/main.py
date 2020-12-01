@@ -1,11 +1,13 @@
 import logging
-from flask import Flask, request, abort, send_file
-import messages
-import messengers
+from flask import Flask, request, abort
+from typing import Optional
+from entities import Message
+from messengers import Messenger
+from storage import Storage
+import commands
+import l10n
 
-app = Flask(__name__,
-            static_url_path='/',
-            static_folder='../pages')
+app = Flask(__name__)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -13,24 +15,46 @@ logger.setLevel(logging.INFO)
 
 @app.route('/<string:messenger>', methods=['POST'])
 def main(messenger):
-    logger.info(f'request to "{messenger}"')
+    messenger_from = Messenger.get_instance(messenger)
 
-    data = request.json
-
-    if messenger in messengers.modules:
-        module = messengers.modules[messenger]
-        result = module.parse(data)
-        messages.forward(result)
-        return 'ok'
-    else:
-        logger.warning(f'unknown target "{messenger}" with {data}')
-        logger.warning(str(data))
+    if messenger_from is None:
         abort(404)
+        return
 
+    msg: Optional[Message] = messenger_from.parse(request.json)
+    if msg is None:
+        return 'ok'
 
-@app.route('/', methods=['GET'])
-def site():
-    return send_file('../pages/index.html')
+    if not msg.sender.registered:
+        Storage().add_user(msg.sender)
+        messenger_from.send(msg.sender.id, Message(l10n.format(msg.sender.lang, 'REGISTER')))
+
+        if msg.cmd is None:
+            return 'ok'
+
+    if msg.cmd is not None:
+        cmd_class = commands.get_class(msg.cmd.name)
+        cmd_class(msg).execute()
+        return 'ok'
+
+    if msg.sender.receiver is None:
+        messenger_from.send(msg.sender.id, Message(l10n.format(msg.sender.lang, 'NO_RECIPIENT')))
+        return 'ok'
+
+    receiver = Storage().get_user(msg.sender.receiver)
+    if receiver.receiver != msg.sender.key:
+        messenger_from.send(msg.sender.id, Message(l10n.format(
+            msg.sender.lang, 'CONN_WAIT',
+            name=receiver.name,
+            messenger=receiver.messenger
+        )))
+        return 'ok'
+
+    messenger_to = Messenger.get_instance(receiver.messenger)
+    msg.text = l10n.format('', 'MSG', name=msg.sender.name, msg=msg.text)
+    messenger_to.send(receiver.id, msg)
+
+    return 'ok'
 
 
 if __name__ == '__main__':
