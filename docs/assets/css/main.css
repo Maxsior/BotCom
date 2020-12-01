@@ -1,5 +1,4 @@
-@import url(fontawesome.min.css);
-@import url(brands.min.css);
+@import url(all.min.css);
 @import "https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400";
 
 /*
@@ -2225,8 +2224,6 @@ input, select, textarea {
 		.icon:before {
 			-moz-osx-font-smoothing: grayscale;
 			-webkit-font-smoothing: antialiased;
-			font-style: normal;
-			font-weight: normal;
 			text-transform: none !important;
 		}
 
