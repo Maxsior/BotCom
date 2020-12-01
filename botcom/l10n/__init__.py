@@ -7,7 +7,7 @@ locales = {}
 default = 'ru'
 
 
-def format(loc: str, key: str, /, **kwargs: str) -> str:
+def format(loc: str, key: str, **kwargs: str) -> str:
     locale = locales.get(loc, locales[default])
     return locale.get(key, locales[default][key]).format(**kwargs)
 
