@@ -7,10 +7,9 @@ from storage import Storage
 import commands
 import l10n
 
-app = Flask(__name__)
+logging.basicConfig(level=logging.INFO, format='[%(asctime)-15s] %(levelname)s %(filename)s:%(lineno)d | %(message)s')
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+app = Flask(__name__)
 
 
 @app.route('/<string:messenger>', methods=['POST'])
@@ -21,28 +20,41 @@ def main(messenger):
         abort(404)
         return
 
+    logging.info('Parsing the message')
+
     msg: Optional[Message] = messenger_from.parse(request.json)
+
     if msg is None:
+        logging.info('Not new message')
         return 'ok'
 
+    logging.info('Message was parsed successfully')
+
     if not msg.sender.registered:
-        Storage().add_user(msg.sender)
+        logging.info('Registering user')
+        msg.sender.key = Storage().add_user(msg.sender)
+        logging.info('Sending welcome message')
         messenger_from.send(msg.sender.id, Message(l10n.format(msg.sender.lang, 'REGISTER')))
 
         if msg.cmd is None:
             return 'ok'
 
     if msg.cmd is not None:
+        logging.info('Command detected')
         cmd_class = commands.get_class(msg.cmd.name)
+        logging.info('Executing command')
         cmd_class(msg).execute()
         return 'ok'
 
     if msg.sender.receiver is None:
+        logging.info('No receiver')
         messenger_from.send(msg.sender.id, Message(l10n.format(msg.sender.lang, 'NO_RECIPIENT')))
         return 'ok'
 
+    logging.info('Getting receiver')
     receiver = Storage().get_user(msg.sender.receiver)
     if receiver.receiver != msg.sender.key:
+        logging.info('Receiver does not confirm the connection')
         messenger_from.send(msg.sender.id, Message(l10n.format(
             msg.sender.lang, 'CONN_WAIT',
             name=receiver.name,
@@ -50,7 +62,9 @@ def main(messenger):
         )))
         return 'ok'
 
+    logging.info('Getting receiver messenger instance')
     messenger_to = Messenger.get_instance(receiver.messenger)
+    logging.info('Forwarding')
     msg.text = l10n.format('', 'MSG', name=msg.sender.name, msg=msg.text)
     messenger_to.send(receiver.id, msg)
 
@@ -58,6 +72,4 @@ def main(messenger):
 
 
 if __name__ == '__main__':
-    logger.setLevel(logging.DEBUG)
-
-    app.run(debug=True)
+    app.run()

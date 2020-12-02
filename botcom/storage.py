@@ -18,7 +18,7 @@ class Storage:
     def add_user(self, user: 'entities.User'):
         user_dict = asdict(user)
         user_dict.pop('key', None)
-        return self.users.put(user_dict)
+        return self.users.put(user_dict)['key']
 
     def get_user(self, key: str) -> 'entities.User':
         user_db = self.users.get(key)
