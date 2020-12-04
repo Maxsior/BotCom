@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field, InitVar
 from typing import List, Optional
+import logging
 import storage
 
 
@@ -21,11 +22,13 @@ class User:
 
     def __post_init__(self, refine):
         if refine:
+            logging.info('Getting user information from database')
             user = storage.Storage().find_user(self.messenger, self.id)
             if user:
                 self.key = user.key
                 self.lang = user.lang or self.lang
                 self.receiver = user.receiver
+            logging.info('Done')
 
 
 @dataclass
