@@ -1,13 +1,18 @@
 import importlib
 from abc import ABC, abstractmethod
 from typing import Optional
-from entities import Message
+from entities import Message, Keyboard
 
 
 class Messenger(ABC):
     @staticmethod
     @abstractmethod
-    def send(id_to: str, msg: Message):
+    def create_keyboard(keyboard: Keyboard):
+        raise NotImplementedError
+
+    @staticmethod
+    @abstractmethod
+    def send(id_to: str, msg: Message, keyboard: Optional[Keyboard]):
         raise NotImplementedError
 
     @staticmethod

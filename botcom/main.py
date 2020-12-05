@@ -7,7 +7,8 @@ from storage import Storage
 import commands
 import l10n
 
-logging.basicConfig(level=logging.INFO, format='[%(asctime)-15s] %(levelname)s %(filename)s:%(lineno)d | %(message)s')
+logging.basicConfig(level=logging.INFO,
+                    format='[%(asctime)-15s] %(levelname)s %(filename)s:%(lineno)d | %(message)s')
 
 app = Flask(__name__)
 

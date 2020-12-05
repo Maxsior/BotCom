@@ -1,5 +1,5 @@
 from messengers import Messenger
-from entities import Message, User
+from entities import Message, User, Keyboard
 
 
 class Discord(Messenger):
@@ -8,7 +8,11 @@ class Discord(Messenger):
         return msg.text.startswith('?b')
 
     @staticmethod
-    def send(id_to: int, message: Message):
+    def create_keyboard(keyboard):
+        pass
+
+    @staticmethod
+    def send(id_to: int, message: Message, keyboard: Keyboard = None):
         pass
 
     @staticmethod

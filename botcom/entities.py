@@ -34,7 +34,18 @@ class User:
 @dataclass
 class CommandInfo:
     name: str
-    args: List[str]
+    args: List[str] = field(default_factory=list)
+
+
+@dataclass
+class Button:
+    text: str
+    cmd: CommandInfo
+
+
+@dataclass
+class Keyboard:
+    buttons: List[List[Button]]
 
 
 @dataclass

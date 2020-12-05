@@ -10,7 +10,7 @@ from messengers import Messenger
 
 class Vk(Messenger):
     @staticmethod
-    def send(receiver_id, msg: Message, **kwargs):
+    def send(receiver_id, text: Message, keyboard: Keyboard = None):
         api_url = 'https://api.vk.com/method/messages.send?'
         query = {
             'peer_id': receiver_id,

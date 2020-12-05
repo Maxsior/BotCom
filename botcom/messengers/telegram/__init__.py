@@ -2,26 +2,17 @@ import os
 from urllib.parse import urlencode
 from urllib.request import urlopen
 from messengers import Messenger
-from entities import Message, User, CommandInfo
+from entities import Message, User, CommandInfo, Keyboard
 
 
 class Telegram(Messenger):
     @staticmethod
-    def is_cmd(msg: Message):
-        return msg.text.startswith('/')
-
-    @staticmethod
-    def send(receiver_id, msg: Message, **kwargs):
+    def send(receiver_id, msg: Message, keyboard: Keyboard = None):
         api_url = f"https://api.telegram.org/bot{os.getenv('TELEGRAM_TOKEN')}/sendMessage?"
         query = {
             'chat_id': receiver_id,
             'text': msg.text
         }
-
-        # if 'keyboard' in kwargs:
-        #     keyboard = os.path.join(os.path.dirname(__file__), f"{kwargs['keyboard']}_keyboard.json")
-        #     with open(keyboard, encoding='utf-8') as f:
-        #         query['reply_markup'] = f.read()
 
         api_url += urlencode(query)
         return urlopen(api_url)
@@ -42,8 +33,9 @@ class Telegram(Messenger):
 
             return Message(
                 sender=user,
-                text=msg['text'],
-                cmd=Telegram.parse_cmd(msg)
+                text=msg.get('text', ''),
+                cmd=Telegram.parse_cmd(msg),
+                attachments=Telegram.parse_attachments(msg)
             )
         else:
             return None
