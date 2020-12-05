@@ -12,7 +12,7 @@ class UnregCommand(Command):
         for connected in Storage().get_connected(sender.key):
             Storage().update(connected.key, {'receiver': None})
             messenger_to = Messenger.get_instance(connected.messenger)
-            messenger_to.send(sender.id, Message(l10n.format(sender.lang, 'FRIEND_OFF')))
+            messenger_to.send(connected.id, Message(l10n.format(connected.lang, 'FRIEND_OFF')))
 
         Storage().delete(sender.key)
         messenger = Messenger.get_instance(sender.messenger)
