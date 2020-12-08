@@ -9,7 +9,7 @@ class KeyboardCommand(Command):
         messenger = Messenger.get_instance(sender.messenger)
 
         if len(self.msg.cmd.args) == 0:
-            messenger.send(sender.id, Message('WRONG_ARGS').localize(sender.lang))
+            messenger.send(sender.id, Message('MESSAGE.WRONG_ARGS').localize(sender.lang))
             return
 
         keyboard = self.msg.cmd.args[0]
@@ -17,4 +17,4 @@ class KeyboardCommand(Command):
         try:
             messenger.send(sender.id, Message(f'KEYBOARD.{keyboard.upper()}').localize(sender.lang))
         except KeyError:
-            messenger.send(sender.id, Message('WRONG_ARGS').localize(sender.lang))
+            messenger.send(sender.id, Message('MESSAGE.WRONG_ARGS').localize(sender.lang))

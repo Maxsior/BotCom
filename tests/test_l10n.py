@@ -3,12 +3,12 @@ from botcom import l10n
 
 
 def test_format():
-    result = l10n.format('ru', 'MSG', name='name', msg='msg')
+    result = l10n.format('ru', 'MESSAGE.TEMPLATE', name='name', msg='msg')
     assert result == 'name:\nmsg\n'
 
 
 def test_wrong_locale():
-    result = l10n.format('WRONG LOCALE', 'MSG', name='name', msg='msg')
+    result = l10n.format('WRONG LOCALE', 'MESSAGE.TEMPLATE', name='name', msg='msg')
     assert result == 'name:\nmsg\n'
 
 
@@ -19,10 +19,14 @@ def test_wrong_key():
 
 def test_keys():
     required_keys = [
-        'HELP', 'FULL_HELP', 'STATUS', 'NO_RECIPIENT', 'INVALID_USER',
-        'REGISTER', 'CONNECTED', 'CONN_NOTIFICATION', 'CONN_WAIT',
-        'WAIT_FOR_PARAMS', 'NO_SOCIAL', 'BYE', 'OFF', 'OFF_BLANK',
-        'FRIEND_OFF', 'UNDEFINED_CMD'
+        'MESSAGE.HELP', 'MESSAGE.FULL_HELP', 'MESSAGE.STATUS', 'MESSAGE.NO_RECIPIENT', 'MESSAGE.INVALID_USER',
+        'MESSAGE.REGISTER', 'MESSAGE.CONNECTED', 'MESSAGE.CONN_NOTIFICATION', 'MESSAGE.CONN_WAIT',
+        'MESSAGE.WAIT_FOR_PARAMS:', 'MESSAGE.NO_SOCIAL', 'MESSAGE.BYE', 'MESSAGE.OFF',
+        'MESSAGE.OFF_BLANK', 'MESSAGE.FRIEND_OFF', 'MESSAGE.FRIEND_UNREG', 'MESSAGE.LANG_CHANGED',
+        'MESSAGE.UNDEFINED_CMD', 'MESSAGE.WRONG_ARGS', 'MESSAGE.TEMPLATE',
+        'BUTTON.NEW_DIALOG:', 'BUTTON.DIALOGS', 'BUTTON.SETTINGS',
+        'BUTTON.OFF', 'BUTTON.LANG', 'BUTTON.HELP', 'BUTTON.UNREG', 'BUTTON.START',
+        'KEYBOARD.MESSENGERS', 'KEYBOARD.DIALOGS', 'KEYBOARD.SETTINGS', 'KEYBOARD.LANG'
     ]
     for name in l10n.locales:
         for key in required_keys:

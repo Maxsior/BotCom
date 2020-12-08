@@ -8,4 +8,4 @@ class HelpCommand(Command):
     def execute(self):
         sender = self.msg.sender
         messenger = Messenger.get_instance(sender.messenger)
-        messenger.send(sender.id, Message(l10n.format(sender.lang, 'FULL_HELP')))
+        messenger.send(sender.id, Message('MESSAGE.FULL_HELP').localize(sender.lang))

@@ -35,7 +35,7 @@ def main(messenger):
         logging.info('Registering user')
         msg.sender.key = Storage().add_user(msg.sender)
         logging.info('Sending welcome message')
-        messenger_from.send(msg.sender.id, Message(l10n.format(msg.sender.lang, 'REGISTER')))
+        messenger_from.send(msg.sender.id, Message('MESSAGE.REGISTER').localize(msg.sender.lang))
 
         if msg.cmd is None:
             return 'ok'
@@ -49,25 +49,28 @@ def main(messenger):
 
     if msg.sender.receiver is None:
         logging.info('No receiver')
-        messenger_from.send(msg.sender.id, Message(l10n.format(msg.sender.lang, 'NO_RECIPIENT')))
+        messenger_from.send(msg.sender.id, Message('MESSAGE.NO_RECIPIENT').localize(msg.sender.lang))
         return 'ok'
 
     logging.info('Getting receiver')
     receiver = Storage().get_user(msg.sender.receiver)
     if receiver.receiver != msg.sender.key:
         logging.info('Receiver does not confirm the connection')
-        messenger_from.send(msg.sender.id, Message(l10n.format(
-            msg.sender.lang, 'CONN_WAIT',
-            name=receiver.name,
-            messenger=receiver.messenger
-        )))
+        messenger_from.send(
+            msg.sender.id,
+            Message('CONN_WAIT').localize(msg.sender.lang,
+                                          name=receiver.name,
+                                          messenger=receiver.messenger)
+        )
         return 'ok'
 
     logging.info('Getting receiver messenger instance')
     messenger_to = Messenger.get_instance(receiver.messenger)
     logging.info('Forwarding')
-    msg.text = l10n.format('', 'MSG', name=msg.sender.name, msg=msg.text)
-    messenger_to.send(receiver.id, msg)
+    messenger_to.send(
+        receiver.id,
+        Message('MESSAGE.TEMPLATE', msg.attachments).localize('', name=msg.sender.name, msg=msg.text)
+    )
 
     return 'ok'
 

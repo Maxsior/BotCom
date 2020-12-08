@@ -14,7 +14,7 @@ class OffCommand(Command):
             Storage().update(sender.key, {'receiver': None})
             Storage().update(receiver.key, {'receiver': None})
             messenger_to = Messenger.get_instance(receiver.messenger)
-            messenger_to.send(sender.id, Message(l10n.format(sender.lang, 'FRIEND_OFF')))
-            messenger_from.send(sender.id, Message(l10n.format(sender.lang, 'OFF')))
+            messenger_to.send(sender.id, Message('MESSAGE.FRIEND_OFF').localize(sender.lang))
+            messenger_from.send(sender.id, Message('MESSAGE.OFF').localize(sender.lang))
         else:
-            messenger_from.send(sender.id, Message(l10n.format(sender.lang, 'OFF_BLANK')))
+            messenger_from.send(sender.id, Message('MESSAGE.OFF_BLANK').localize(sender.lang))
