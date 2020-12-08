@@ -49,7 +49,7 @@ MESSAGE.OFF_BLANK: You are already disconnected
 
 MESSAGE.FRIEND_OFF: Your companion has been disconnected
 
-MESSAGE.FRIEND_UNREG: Your companion account has been deleted their account
+MESSAGE.FRIEND_UNREG: Your companion has been deleted their account
 
 MESSAGE.LANG_CHANGED: Your language is English now
 
