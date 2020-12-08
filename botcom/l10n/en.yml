@@ -16,10 +16,6 @@ MESSAGE.FULL_HELP: |
   - /unreg, /del, /delete -- delete your BotCom account.
   - /help -- print this message.
 
-MESSAGE.STATUS: |
-  Currently connected with {name} ({current})
-  Others: {others}
-
 MESSAGE.NO_RECIPIENT: >
   No recipient! Please, send /conn ID SOCIAL to connect somebody
 
