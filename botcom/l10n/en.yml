@@ -54,3 +54,20 @@ FRIEND_UNREG: Your companion account has been deleted
 LANG_CHANGED: Your language is English now
 
 UNDEFINED_CMD: Unknown command! To list available commands send /help
+
+WRONG_ARGS: Wrong command arguments. For more information send /help
+
+BUTTON.NEW_DIALOG: Start new dialog
+BUTTON.DIALOGS: Dialogs
+BUTTON.SETTINGS: Settings
+BUTTON.OFF: Close dialog
+BUTTON.LANG: Select language
+BUTTON.HELP: Help
+BUTTON.UNREG: Delete account
+BUTTON.START: Start
+
+KEYBOARD.MESSENGERS: Select messenger or social network
+KEYBOARD.DIALOGS: Select companion
+KEYBOARD.SETTINGS: Select action
+KEYBOARD.LANG: Select language
+

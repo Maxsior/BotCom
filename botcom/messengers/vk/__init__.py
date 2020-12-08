@@ -5,12 +5,13 @@ from flask import abort, Response
 from urllib.parse import urlencode
 from urllib.request import urlopen
 from entities import Message, User, CommandInfo
+from entities.keyboards import Keyboard
 from messengers import Messenger
 
 
 class Vk(Messenger):
     @staticmethod
-    def send(receiver_id, text: Message, keyboard: Keyboard = None):
+    def send(receiver_id, msg: Message, keyboard: Keyboard = None):
         api_url = 'https://api.vk.com/method/messages.send?'
         query = {
             'peer_id': receiver_id,
@@ -20,13 +21,25 @@ class Vk(Messenger):
             'v': 5.126
         }
 
-        # if 'keyboard' in kwargs:
-        #     keyboard = os.path.join(os.path.dirname(__file__), f"{kwargs['keyboard']}_keyboard.json")
-        #     with open(keyboard, encoding='utf-8') as f:
-        #         query['keyboard'] = f.read()
-
         api_url += urlencode(query)
         return urlopen(api_url)
+
+    @staticmethod
+    def create_keyboard(keyboard: Keyboard):
+        json_keyboard = {
+            "one_time": False,
+            "buttons": []
+        }
+
+        row = []
+        for button in keyboard.buttons:
+            if button:
+                row.append(button)
+            else:
+                json_keyboard['buttons'].append(row)
+                row = []
+
+        return json.dumps(json_keyboard)
 
     @staticmethod
     def parse(data):

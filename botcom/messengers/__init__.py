@@ -1,7 +1,10 @@
 import importlib
 from abc import ABC, abstractmethod
-from typing import Optional
-from entities import Message, Keyboard
+from typing import Optional, Generator
+from entities import Message
+from entities.keyboards import Keyboard
+import os
+import os.path
 
 
 class Messenger(ABC):
@@ -32,3 +35,10 @@ class Messenger(ABC):
             return getattr(module, name.capitalize())
         except (ImportError, AttributeError):
             return None
+
+    @staticmethod
+    def get_available_messengers() -> Generator[str, None, None]:
+        base = os.path.dirname(__file__)
+        for item in os.scandir(base):
+            if item.is_dir():
+                yield item.name

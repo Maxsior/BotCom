@@ -96,3 +96,17 @@ MSG: |
 UNDEFINED_CMD: Неизвестная команда! Чтобы увидеть доступные команды, введите /help
 
 WRONG_ARGS: Неверные аргументы для команды. Чтобы получить справку, введите /help
+
+BUTTON.NEW_DIALOG: Начать диалог
+BUTTON.DIALOGS: Диалоги
+BUTTON.SETTINGS: Настройки
+BUTTON.OFF: Закрыть диалог
+BUTTON.LANG: Выбор языка
+BUTTON.HELP: Справка
+BUTTON.UNREG: Удалить аккаунт
+BUTTON.START: Начать
+
+KEYBOARD.MESSENGERS: Выберите мессенджер или социальную сеть
+KEYBOARD.DIALOGS: Выберите собеседника
+KEYBOARD.SETTINGS: Выберите действие
+KEYBOARD.LANG: Выберите язык
