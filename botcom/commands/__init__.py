@@ -7,14 +7,10 @@ from commands.lang import LangCommand
 from commands.keyboard import KeyboardCommand
 from commands.empty import EmptyCommand
 from commands.chat_alias import ChatCommandAlias
+from messengers import Messenger
 
 commands = {
-    # TODO get list of messengers dynamically
-    'vk': ChatCommandAlias,
-    'viber': ChatCommandAlias,
-    'telegram': ChatCommandAlias,
-    'discord': ChatCommandAlias,
-    # ...
+    **{messenger: ChatCommandAlias for messenger in Messenger.get_available_messengers()},
     'chat': ChatCommand,
     'help': HelpCommand,
     'lang': LangCommand,
