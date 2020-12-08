@@ -49,7 +49,7 @@ OFF_BLANK: You are already disconnected
 
 FRIEND_OFF: Your companion has been disconnected
 
-FRIEND_UNREG: Your companion account has been deleted
+FRIEND_UNREG: Your companion account has been deleted their account
 
 LANG_CHANGED: Your language is English now
 
@@ -70,4 +70,8 @@ KEYBOARD.MESSENGERS: Select messenger or social network
 KEYBOARD.DIALOGS: Select companion
 KEYBOARD.SETTINGS: Select action
 KEYBOARD.LANG: Select language
+
+MSG: |
+  {name}:
+  {msg}
 

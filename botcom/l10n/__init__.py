@@ -4,7 +4,7 @@ import ruamel.yaml as yaml
 
 locales = {}
 
-default = 'ru'
+default = 'en'
 
 
 def format(loc: str, key: str, **kwargs: str) -> str:
