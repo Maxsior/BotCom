@@ -1,15 +1,15 @@
-import abc
+from abc import ABC, abstractmethod
 import l10n
 import entities.buttons as buttons
 from entities import User, Button, CommandInfo
 
 
-class Keyboard(abc.ABC):
+class Keyboard(ABC):
     def __init__(self, owner: User):
         self.owner = owner
 
-    @abc.abstractmethod
     @property
+    @abstractmethod
     def buttons(self):
         raise NotImplementedError
 
