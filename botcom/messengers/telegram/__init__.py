@@ -22,14 +22,16 @@ class Telegram(Messenger):
     def parse(data):
         if 'message' in data:
             msg = data['message']
-            name = msg['from']['first_name'] + ' ' + msg['from']['last_name']
+            name = msg['from']['first_name']
+            if 'last_name' in msg['from']:
+                name += f" {msg['from']['last_name']}"
 
             user = User(
                 id=msg['chat']['id'],
                 name=name,
                 messenger='telegram',
-                nick=msg['from']['username'],
-                lang=msg['from']['language_code']
+                nick=msg['from'].get('username'),
+                lang=msg['from'].get('language_code')
             )
 
             return Message(
