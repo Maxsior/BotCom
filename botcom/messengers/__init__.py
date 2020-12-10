@@ -1,4 +1,4 @@
-import importlib
+import importlib.util
 from abc import ABC, abstractmethod
 from typing import Optional, List
 from entities import Message
@@ -30,10 +30,12 @@ class Messenger(ABC):
 
     @staticmethod
     def get_instance(name: str):
-        try:
-            module = importlib.import_module(f'{__name__}.{name}')
+        spec = importlib.util.find_spec(f'{__name__}.{name}')
+        if spec:
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
             return getattr(module, name.capitalize())
-        except (ImportError, AttributeError):
+        else:
             return None
 
 

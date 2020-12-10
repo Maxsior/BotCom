@@ -2,7 +2,8 @@ import os
 from urllib.parse import urlencode
 from urllib.request import urlopen
 from messengers import Messenger
-from entities import Message, User, CommandInfo, Keyboard
+from entities.keyboards import Keyboard
+from entities import Message, User, CommandInfo
 
 
 class Telegram(Messenger):
