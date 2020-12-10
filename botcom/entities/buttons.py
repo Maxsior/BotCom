@@ -1,13 +1,13 @@
 from entities import Button, CommandInfo
 
-new_dialog = Button('BUTTONS.NEW_DIALOG', CommandInfo('keyboard', ['messengers']))
-dialogs = Button('BUTTONS.DIALOGS', CommandInfo('keyboard', ['dialogs']))
-settings = Button('BUTTONS.SETTINGS', CommandInfo('keyboard', ['settings']))
-off = Button('BUTTONS.OFF', CommandInfo('off'))
 
+new_dialog = lambda lang: Button('BUTTON.NEW_DIALOG', CommandInfo('keyboard', ['messengers'])).localize(lang)
+dialogs = lambda lang: Button('BUTTON.DIALOGS', CommandInfo('keyboard', ['dialogs'])).localize(lang)
+settings = lambda lang: Button('BUTTON.SETTINGS', CommandInfo('keyboard', ['settings'])).localize(lang)
+off = lambda lang: Button('BUTTON.OFF', CommandInfo('off')).localize(lang)
 
-lang = Button('BUTTONS.LANG', CommandInfo('keyboard', ['lang']))
-help = Button('BUTTONS.HELP', CommandInfo('help'))
-unreg = Button('BUTTONS.UNREG', CommandInfo('unreg'))
+lang = lambda lang: Button('BUTTON.LANG', CommandInfo('keyboard', ['lang'])).localize(lang)
+help = lambda lang: Button('BUTTON.HELP', CommandInfo('help')).localize(lang)
+unreg = lambda lang: Button('BUTTON.UNREG', CommandInfo('unreg')).localize(lang)
 
-start = Button('BUTTONS.START', CommandInfo('empty'))
+start = lambda lang: Button('BUTTON.START', CommandInfo('empty')).localize(lang)

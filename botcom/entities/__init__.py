@@ -48,6 +48,10 @@ class Button:
     cmd: CommandInfo
     # TODO color
 
+    def localize(self, lang, **kwagrs):
+        self.text = l10n.format(lang, self.text, **kwagrs)
+        return self
+
 
 @dataclass
 class Message:
@@ -57,5 +61,5 @@ class Message:
     sender: Optional[User] = None
 
     def localize(self, lang, **kwagrs):
-        l10n.format(lang, self.text, **kwagrs)
+        self.text = l10n.format(lang, self.text, **kwagrs)
         return self

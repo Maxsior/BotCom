@@ -7,10 +7,10 @@ from commands.lang import LangCommand
 from commands.keyboard import KeyboardCommand
 from commands.empty import EmptyCommand
 from commands.chat_alias import ChatCommandAlias
-from messengers import Messenger
+import messengers
 
 commands = {
-    **{messenger: ChatCommandAlias for messenger in Messenger.get_available_messengers()},
+    **{messenger: ChatCommandAlias for messenger in messengers.get_available_messengers()},
     'chat': ChatCommand,
     'help': HelpCommand,
     'lang': LangCommand,

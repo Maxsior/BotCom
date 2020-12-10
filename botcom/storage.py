@@ -4,16 +4,15 @@ from dataclasses import asdict
 from typing import Dict, Union
 import entities
 
+_deta = None
+
 
 class Storage:
-    __instance = False
-
-    def __new__(cls):
-        if not cls.__instance:
-            cls.__instance = super().__new__(cls)
-            deta = Deta(os.getenv('DETA_PROJECT_KEY'))
-            cls.__instance.users = deta.Base('users')
-        return cls.__instance
+    def __init__(self):
+        global _deta
+        if _deta is None:
+            _deta = Deta(os.getenv('DETA_PROJECT_KEY'))
+        self.users = _deta.Base('users')
 
     def add_user(self, user: 'entities.User'):
         user_dict = asdict(user)
@@ -47,7 +46,7 @@ class Storage:
 
     def get_connected(self, key: str):
         users = next(self.users.fetch({
-            'receiver': key,
+            'receiver': key
         }))
 
         return [entities.User(**user, refine=False) for user in users]

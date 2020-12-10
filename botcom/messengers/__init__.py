@@ -1,8 +1,8 @@
 import importlib
 from abc import ABC, abstractmethod
-from typing import Optional, Generator
+from typing import Optional, List
 from entities import Message
-from entities.keyboards import Keyboard
+import entities.keyboards as keyboards
 import os
 import os.path
 
@@ -10,12 +10,12 @@ import os.path
 class Messenger(ABC):
     @staticmethod
     @abstractmethod
-    def create_keyboard(keyboard: Keyboard):
+    def create_keyboard(keyboard: 'keyboards.Keyboard'):
         raise NotImplementedError
 
     @staticmethod
     @abstractmethod
-    def send(id_to: str, msg: Message, keyboard: Optional[Keyboard]):
+    def send(id_to: str, msg: Message, keyboard: Optional['keyboards.Keyboard']):
         raise NotImplementedError
 
     @staticmethod
@@ -36,9 +36,9 @@ class Messenger(ABC):
         except (ImportError, AttributeError):
             return None
 
-    @staticmethod
-    def get_available_messengers() -> Generator[str, None, None]:
-        base = os.path.dirname(__file__)
-        for item in os.scandir(base):
-            if item.is_dir():
-                yield item.name
+
+def get_available_messengers() -> List[str]:
+    base = os.path.dirname(__file__)
+    return [item.name
+            for item in os.scandir(base)
+            if item.is_dir() and not item.name.startswith(('__', '.'))]

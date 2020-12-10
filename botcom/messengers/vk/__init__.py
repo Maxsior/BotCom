@@ -2,11 +2,11 @@ import os
 import random
 import json
 from flask import abort, Response
-from urllib.parse import urlencode
-from urllib.request import urlopen
+import requests
 from entities import Message, User, CommandInfo
 from entities.keyboards import Keyboard
 from messengers import Messenger
+from dataclasses import asdict
 
 
 class Vk(Messenger):
@@ -21,8 +21,10 @@ class Vk(Messenger):
             'v': 5.126
         }
 
-        api_url += urlencode(query)
-        return urlopen(api_url)
+        if keyboard is not None:
+            query['keyboard'] = Vk.create_keyboard(keyboard)
+
+        return requests.post(api_url, data=query)
 
     @staticmethod
     def create_keyboard(keyboard: Keyboard):
@@ -34,7 +36,14 @@ class Vk(Messenger):
         row = []
         for button in keyboard.buttons:
             if button:
-                row.append(button)
+                row.append({
+                    "action": {
+                      "type": "text",
+                      "payload": json.dumps(asdict(button.cmd)),
+                      "label": button.text
+                    },
+                    "color": "primary"
+                })
             else:
                 json_keyboard['buttons'].append(row)
                 row = []
@@ -63,7 +72,7 @@ class Vk(Messenger):
                 cmd=Vk.parse_cmd(msg),
                 attachments=[]  # TODO attachments
             )
-        elif data_type == 'confirmation' and data.get('group_id') == 176977577:
+        elif data_type == 'confirmation' and str(data.get('group_id')) == os.getenv('VK_GROUP'):
             abort(Response(os.getenv('VK_CONFIRMATION')))
         else:
             return None
@@ -77,7 +86,7 @@ class Vk(Messenger):
                 name=name.replace('/', ''),
                 args=args
             )
-        elif 'payload' in msg:
+        elif 'payload' in msg and 'name' in msg['payload']:
             payload = json.loads(msg['payload'])
             cmd = CommandInfo(
                 name=payload['name'],
@@ -88,15 +97,13 @@ class Vk(Messenger):
     @staticmethod
     def _get_info(real_id):
         api_url = 'https://api.vk.com/method/users.get?'
-        query = urlencode({
+        res = requests.post(api_url, data={
             'user_ids': real_id,
             'fields': 'domain',
             'access_token': os.getenv('VK_TOKEN'),
             'v': 5.126
         })
-        api_url += query
-        with urlopen(api_url) as res:
-            result = json.loads(res.read().decode('utf-8'))['response'][0]
+        result = res.json()['response'][0]
         return result['first_name'] + ' ' + result['last_name'], result['domain']
 
     @staticmethod

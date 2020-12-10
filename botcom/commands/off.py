@@ -2,7 +2,7 @@ from commands.base import Command
 from storage import Storage
 from messengers import Messenger
 from entities import Message
-import l10n
+import entities.keyboards as keyboards
 
 
 class OffCommand(Command):
@@ -14,7 +14,19 @@ class OffCommand(Command):
             Storage().update(sender.key, {'receiver': None})
             Storage().update(receiver.key, {'receiver': None})
             messenger_to = Messenger.get_instance(receiver.messenger)
-            messenger_to.send(sender.id, Message('MESSAGE.FRIEND_OFF').localize(sender.lang))
-            messenger_from.send(sender.id, Message('MESSAGE.OFF').localize(sender.lang))
+            messenger_to.send(
+                receiver.id,
+                Message('MESSAGE.FRIEND_OFF').localize(receiver.lang),
+                keyboards.ConnectKeyboard(receiver)
+            )
+            messenger_from.send(
+                sender.id,
+                Message('MESSAGE.OFF').localize(sender.lang),
+                keyboards.ConnectKeyboard(sender)
+            )
         else:
-            messenger_from.send(sender.id, Message('MESSAGE.OFF_BLANK').localize(sender.lang))
+            messenger_from.send(
+                sender.id,
+                Message('MESSAGE.OFF_BLANK').localize(sender.lang),
+                keyboards.ConnectKeyboard(sender)
+            )

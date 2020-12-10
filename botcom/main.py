@@ -2,10 +2,10 @@ import logging
 from flask import Flask, request, abort
 from typing import Optional
 from entities import Message
+import entities.keyboards as keyboards
 from messengers import Messenger
 from storage import Storage
 import commands
-import l10n
 
 logging.basicConfig(level=logging.INFO,
                     format='[%(asctime)-15s] %(levelname)s %(filename)s:%(lineno)d | %(message)s')
@@ -35,7 +35,11 @@ def main(messenger):
         logging.info('Registering user')
         msg.sender.key = Storage().add_user(msg.sender)
         logging.info('Sending welcome message')
-        messenger_from.send(msg.sender.id, Message('MESSAGE.REGISTER').localize(msg.sender.lang))
+        messenger_from.send(
+            msg.sender.id,
+            Message('MESSAGE.REGISTER').localize(msg.sender.lang),
+            keyboards.ConnectKeyboard(msg.sender)
+        )
 
         if msg.cmd is None:
             return 'ok'
@@ -49,7 +53,11 @@ def main(messenger):
 
     if msg.sender.receiver is None:
         logging.info('No receiver')
-        messenger_from.send(msg.sender.id, Message('MESSAGE.NO_RECIPIENT').localize(msg.sender.lang))
+        messenger_from.send(
+            msg.sender.id,
+            Message('MESSAGE.NO_RECIPIENT').localize(msg.sender.lang),
+            keyboards.ConnectKeyboard(msg.sender)
+        )
         return 'ok'
 
     logging.info('Getting receiver')
@@ -60,7 +68,8 @@ def main(messenger):
             msg.sender.id,
             Message('CONN_WAIT').localize(msg.sender.lang,
                                           name=receiver.name,
-                                          messenger=receiver.messenger)
+                                          messenger=receiver.messenger),
+            keyboards.ConnectKeyboard(msg.sender)
         )
         return 'ok'
 
@@ -69,7 +78,8 @@ def main(messenger):
     logging.info('Forwarding')
     messenger_to.send(
         receiver.id,
-        Message('MESSAGE.TEMPLATE', msg.attachments).localize('', name=msg.sender.name, msg=msg.text)
+        Message('MESSAGE.TEMPLATE', msg.attachments).localize('', name=msg.sender.name, msg=msg.text),
+        keyboards.ConnectKeyboard(receiver)
     )
 
     return 'ok'
