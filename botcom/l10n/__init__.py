@@ -1,8 +1,9 @@
 from glob import iglob
 import os.path as path
+from typing import Dict
 import ruamel.yaml as yaml
 
-locales = {}
+locales: Dict[str, Dict[str, str]] = {}
 
 default = 'en'
 
