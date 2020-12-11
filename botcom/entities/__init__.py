@@ -4,6 +4,10 @@ import logging
 import storage
 import l10n
 
+logging.basicConfig(level=logging.INFO,
+                    format='[%(asctime)-15s] %(levelname)s %(filename)s:%(lineno)d | %(message)s')
+logger = logging.getLogger(__name__)
+
 
 @dataclass
 class User:
@@ -27,13 +31,13 @@ class User:
 
     def __post_init__(self, refine):
         if refine:
-            logging.info('Getting user information from database')
+            logger.info('Getting user information from database')
             user = storage.Storage().find_user(self.messenger, self.id)
             if user:
                 self.key = user.key
                 self.lang = user.lang or self.lang
                 self.receiver = user.receiver
-            logging.info('Done')
+            logger.info('Done')
 
 
 @dataclass
