@@ -1,39 +1,54 @@
-MESSAGE.HELP: >
-  BotCom helps send messages across different messengers and social networks.
-
-  Currently only text messages are supported for vk, telegram, viber.
-
-  For more information send /help.
-
 MESSAGE.FULL_HELP: |
   List of available commands:
-  - /reg, /start -- get new identifier.
-  - /conn ID SOCIAL, /chat ID SOCIAL, where
-   SOCIAL - messenger (vk, telegram и т.д.)
-   ID - identifier of friend in messenger.
-  - /status -- information about your account and current connections.
-  - /close, /off -- disconnect from dialog.
-  - /unreg, /del, /delete -- delete your BotCom account.
-  - /help -- print this message.
+
+  - /MESSENGER ID -- connect to user ID from MESSENGER, where
+    MESSENGER - messenger or social network (vk, telegram, viber etc)
+    ID - identifier of friend in messenger or social network
+  Examples:
+    /telegram superkitty
+    /vk 177482059
+
+  - /off -- disconnect from current dialog
+
+  - /lang LANGUAGE -- change language to LANGUAGE
+  Example: /lang en
+
+  - /unreg -- delete your BotCom account
+
+  - /help -- print this message
+
+  You can use buttons instead of writing commands!
 
 MESSAGE.NO_RECIPIENT: >
-  No recipient! Please, send /conn ID SOCIAL to connect somebody
+  No recipient!
+  Please, send /MESSENGER ID
+  or use "Start new dialog" or "Dialogs" buttons
+  to connect to somebody.
+  For more information send /help
 
 MESSAGE.INVALID_USER: Specified user is not registered in BotCom!
 
-MESSAGE.REGISTER: Hooray! Your BotCom account is activated! Now you can send/receive messeges
+MESSAGE.REGISTER: >
+  Hooray!
+  Your BotCom account is activated! Now you can send and receive messages!
 
-MESSAGE.CONNECTED: Connected with {name}!
+  BotCom helps send messages across different messengers and social networks.
+  Currently only text messages are supported for vk and telegram.
+  For more information send /help
+
+MESSAGE.CONNECTED: Connected with {name} !
 
 MESSAGE.CONN_NOTIFICATION: >
   {name} from {messenger} is trying to contact you.
-  To start a conversation send /conn {id} {messenger}.
+  To start a conversation
+  send /{id} {messenger}
+  or select {name} from {messenger} using "Dialogs" button
 
 MESSAGE.CONN_WAIT: Waiting for connection from {name} from {messenger}
 
 MESSAGE.WAIT_FOR_PARAMS: >
   Waiting for parameters...
-  Send id and messenger name separated by a space
+  Please, send receiver id
 
 MESSAGE.NO_SOCIAL: Specified messenger is not supported by BotCom yet or does not exist
 
