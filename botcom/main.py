@@ -67,8 +67,8 @@ def main(messenger):
         messenger_from.send(
             msg.sender.id,
             Message('MESSAGE.CONN_WAIT').localize(msg.sender.lang,
-                                          name=receiver.name,
-                                          messenger=receiver.messenger),
+                                                  name=receiver.name,
+                                                  messenger=receiver.messenger),
             keyboards.ConnectKeyboard(msg.sender)
         )
         return 'ok'
