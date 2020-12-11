@@ -20,7 +20,8 @@ Well, there is solution for this...
 **BotCom** - system of bots that allows you to write from current messenger to another messengers
 without needing to create account in these another messengers.
 
-Your messages are not stored
+Your messages are not stored in database.
+We are not going to read your dialogs with bots.
 
 List of available commands:
 
