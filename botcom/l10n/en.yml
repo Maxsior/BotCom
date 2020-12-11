@@ -2,8 +2,8 @@ MESSAGE.FULL_HELP: |
   List of available commands:
 
   - /MESSENGER ID -- connect to user ID from MESSENGER, where
-    MESSENGER - messenger or social network (vk, telegram, viber etc)
-    ID - identifier of friend in messenger or social network
+    MESSENGER is messenger or social network name (vk, telegram, viber etc)
+    ID is an identifier of a friend in specified messenger or social network
   Examples:
     /telegram superkitty
     /vk 177482059
@@ -36,7 +36,7 @@ MESSAGE.REGISTER: >
   Currently only text messages are supported for vk and telegram.
   For more information send /help
 
-MESSAGE.CONNECTED: Connected with {name} !
+MESSAGE.CONNECTED: Connected with {name}!
 
 MESSAGE.CONN_NOTIFICATION: >
   {name} from {messenger} is trying to contact you.

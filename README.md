@@ -1,6 +1,6 @@
 # BotCom
 
-### Problem: 
+### Problem
 Did you ever had problems having accounts in many social networks and messengers?
 
 What do you feel when you need to switch between accounts to write to other people often?
@@ -14,10 +14,10 @@ Why you can't have all your companions in one place?
 
 Well, there is solution for this...
 
-![Схема взаимодействия](https://maxsior.github.io/BotCom/images/new_scheme.png)
+![How it works](https://maxsior.github.io/BotCom/images/new_scheme.png)
 
-### Описание
-**BotCom** - system of bots that allows you to write from current messenger to another messengers
+### Description
+**BotCom** is a system of bots that allows you to write from current messenger to another messengers
 without needing to create account in these another messengers.
 
 Your messages are not stored in database.
@@ -26,8 +26,8 @@ We are not going to read your dialogs with bots.
 List of available commands:
 
   `/MESSENGER ID` -- connect to user `ID` from `MESSENGER`, where
-    `MESSENGER` - messenger or social network (`vk`, `telegram`, `viber` etc)
-    `ID` - identifier of friend in messenger or social network
+    `MESSENGER` is messenger or social network name (`vk`, `telegram`, `viber` etc)
+    `ID` is an identifier of a friend in specified messenger or social network
   Examples:
     `/telegram superkitty`
     `/vk 177482059`
@@ -41,14 +41,14 @@ List of available commands:
 
   `/help` -- print this message
 
-But you also can use messanger buttons as interface to call these commands
-without needing to write them by youself.
+But you also can use button instead of commands
+without needing to write them by yourself.
 
 ### Example
- To create account simply write message to bot being unregistered
+ To create an account simply write a message to bot
  or press `Start` button.
  
-**YOU**: `Hello i want to speak to another messenger` <br>
+**YOU**: `Hello I want to speak to another messenger` <br>
 **BOT**: `Hooray!
   Your BotCom account is activated! Now you can send and receive messages!
   BotCom helps send messages across different messengers and social networks.
@@ -63,11 +63,11 @@ without needing to write them by youself.
  Note: your friend must be registered in BotCom too.
  Each BotCom account from other messenger is a different account.
 
-**YOU**: `telegram friend777` <br>
+**YOU**: `/telegram friend777` <br>
 **BOT**: `Waiting for connection from friend777 from telegram`
 
- After this friend777 will receive message about your request.
- For example, we will write from `vk` having `ID` = `superkitty` 
+ After this `friend777` will receive message about your request.
+ For example, you are writing from `vk` having `ID` = `superkitty` 
  
 **BOT**: `superkitty  from vk is trying to contact you.
   To start a conversation
@@ -80,7 +80,10 @@ without needing to write them by youself.
 
  After that you and friend777 both will receive message about successful connection
 
-**BOT**: `Connected with friend777 !`
-**BOT**: `Connected with superkitty !`
+**BOT**: `Connected with friend777!`
+(to you)
+
+**BOT**: `Connected with superkitty!`
+(to friend777)
 
  At this state all message you send will be received by your companion.

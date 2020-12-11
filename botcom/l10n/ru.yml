@@ -37,7 +37,7 @@ MESSAGE.REGISTER: >
   На данный момент поддерживается отправка только текстовых сообщений в vk и telegram.
   Для подробной справки введите /help
 
-MESSAGE.CONNECTED: Соединено с {name} !
+MESSAGE.CONNECTED: Соединено с {name}!
 
 MESSAGE.CONN_NOTIFICATION: >
   К Вам подключился пользователь {name} из {messenger}.
