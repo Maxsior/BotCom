@@ -67,9 +67,9 @@ def main(messenger):
         logger.info('Receiver does not confirm the connection')
         messenger_from.send(
             msg.sender.id,
-            Message('CONN_WAIT').localize(msg.sender.lang,
-                                          name=receiver.name,
-                                          messenger=receiver.messenger),
+            Message('MESSAGE.CONN_WAIT').localize(msg.sender.lang,
+                                                  name=receiver.name,
+                                                  messenger=receiver.messenger),
             keyboards.ConnectKeyboard(msg.sender)
         )
         return 'ok'
