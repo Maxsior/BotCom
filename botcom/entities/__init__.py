@@ -2,6 +2,7 @@ from dataclasses import dataclass, field, InitVar
 from typing import List, Optional
 import logging
 import storage
+import l10n
 
 
 @dataclass
@@ -20,6 +21,10 @@ class User:
     def registered(self):
         return self.key is not None
 
+    @property
+    def connections(self):
+        return storage.Storage().get_connected(self.key)
+
     def __post_init__(self, refine):
         if refine:
             logging.info('Getting user information from database')
@@ -34,7 +39,18 @@ class User:
 @dataclass
 class CommandInfo:
     name: str
-    args: List[str]
+    args: List[str] = field(default_factory=list)
+
+
+@dataclass
+class Button:
+    text: str
+    cmd: CommandInfo
+    # TODO color
+
+    def localize(self, lang, **kwagrs):
+        self.text = l10n.format(lang, self.text, **kwagrs)
+        return self
 
 
 @dataclass
@@ -43,3 +59,7 @@ class Message:
     attachments: List = field(default_factory=list)
     cmd: Optional[CommandInfo] = None
     sender: Optional[User] = None
+
+    def localize(self, lang, **kwagrs):
+        self.text = l10n.format(lang, self.text, **kwagrs)
+        return self

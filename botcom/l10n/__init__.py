@@ -1,10 +1,11 @@
 from glob import iglob
 import os.path as path
+from typing import Dict
 import ruamel.yaml as yaml
 
-locales = {}
+locales: Dict[str, Dict[str, str]] = {}
 
-default = 'ru'
+default = 'en'
 
 
 def format(loc: str, key: str, **kwargs: str) -> str:

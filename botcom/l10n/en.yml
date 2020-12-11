@@ -1,11 +1,11 @@
-HELP: >
+MESSAGE.HELP: >
   BotCom helps send messages across different messengers and social networks.
 
   Currently only text messages are supported for vk, telegram, viber.
 
   For more information send /help.
 
-FULL_HELP: |
+MESSAGE.FULL_HELP: |
   List of available commands:
   - /reg, /start -- get new identifier.
   - /conn ID SOCIAL, /chat ID SOCIAL, where
@@ -16,41 +16,58 @@ FULL_HELP: |
   - /unreg, /del, /delete -- delete your BotCom account.
   - /help -- print this message.
 
-STATUS: |
-  Currently connected with {name} ({current})
-  Others: {others}
-
-NO_RECIPIENT: >
+MESSAGE.NO_RECIPIENT: >
   No recipient! Please, send /conn ID SOCIAL to connect somebody
 
-INVALID_USER: Specified user is not registered in BotCom!
+MESSAGE.INVALID_USER: Specified user is not registered in BotCom!
 
-REGISTER: Hooray! Your BotCom account is activated! Now you can send/receive messeges
+MESSAGE.REGISTER: Hooray! Your BotCom account is activated! Now you can send/receive messeges
 
-CONNECTED: Connected with {name}!
+MESSAGE.CONNECTED: Connected with {name}!
 
-CONN_NOTIFICATION: >
+MESSAGE.CONN_NOTIFICATION: >
   {name} from {messenger} is trying to contact you.
   To start a conversation send /conn {id} {messenger}.
 
-CONN_WAIT: Waiting for connection from {name} from {messenger}
+MESSAGE.CONN_WAIT: Waiting for connection from {name} from {messenger}
 
-WAIT_FOR_PARAMS: >
+MESSAGE.WAIT_FOR_PARAMS: >
   Waiting for parameters...
   Send id and messenger name separated by a space
 
-NO_SOCIAL: Specified messenger is not supported by BotCom yet or does not exist
+MESSAGE.NO_SOCIAL: Specified messenger is not supported by BotCom yet or does not exist
 
-BYE: Your BotCom account from {messenger} successfully disactivated
+MESSAGE.BYE: Your BotCom account from {messenger} successfully disactivated
 
-OFF: You are successfully disconnected
+MESSAGE.OFF: You are successfully disconnected
 
-OFF_BLANK: You are already disconnected
+MESSAGE.OFF_BLANK: You are already disconnected
 
-FRIEND_OFF: Your companion has been disconnected
+MESSAGE.FRIEND_OFF: Your companion has been disconnected
 
-FRIEND_UNREG: Your companion account has been deleted
+MESSAGE.FRIEND_UNREG: Your companion has been deleted their account
 
-LANG_CHANGED: Your language is English now
+MESSAGE.LANG_CHANGED: Your language is English now
 
-UNDEFINED_CMD: Unknown command! To list available commands send /help
+MESSAGE.UNDEFINED_CMD: Unknown command! To list available commands send /help
+
+MESSAGE.WRONG_ARGS: Wrong command arguments. For more information send /help
+
+BUTTON.NEW_DIALOG: Start new dialog
+BUTTON.DIALOGS: Dialogs
+BUTTON.SETTINGS: Settings
+BUTTON.OFF: Close dialog
+BUTTON.LANG: Select language
+BUTTON.HELP: Help
+BUTTON.UNREG: Delete account
+BUTTON.START: Start
+
+KEYBOARD.MESSENGERS: Select messenger or social network
+KEYBOARD.DIALOGS: Select companion
+KEYBOARD.SETTINGS: Select action
+KEYBOARD.LANG: Select language
+
+MESSAGE.TEMPLATE: |
+  {name}:
+  {msg}
+

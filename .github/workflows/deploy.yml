@@ -11,6 +11,7 @@ jobs:
     env:
       DETA_ACCESS_TOKEN: ${{ secrets.DETA_ACCESS_TOKEN }}
       DETA_PROJECT_KEY: ${{ secrets.DETA_PROJECT_KEY }}
+      VK_GROUP: ${{ secrets.VK_GROUP }}
       VK_TOKEN: ${{ secrets.VK_TOKEN }}
       VK_CONFIRMATION: ${{ secrets.VK_CONFIRMATION }}
       TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
@@ -30,6 +31,7 @@ jobs:
       run: |
         cd botcom
         echo DETA_PROJECT_KEY=$DETA_PROJECT_KEY >> .env
+        echo VK_GROUP=$VK_GROUP >> .env
         echo VK_TOKEN=$VK_TOKEN >> .env
         echo VK_CONFIRMATION=$VK_CONFIRMATION >> .env
         echo TELEGRAM_TOKEN=$TELEGRAM_TOKEN >> .env

@@ -1,9 +1,12 @@
 attrs==20.3.0
+certifi==2020.11.8
+chardet==3.0.4
 click==7.1.2
 coverage==5.3
 deta==0.7
 flake8==3.8.4
 Flask==1.1.2
+idna==2.10
 iniconfig==1.1.1
 itsdangerous==1.1.0
 Jinja2==2.11.2
@@ -18,8 +21,10 @@ pyparsing==2.4.7
 pytest==6.1.2
 pytest-cov==2.10.1
 python-dotenv==0.15.0
+requests==2.25.0
 ruamel.yaml==0.16.12
 ruamel.yaml.clib==0.2.2
 six==1.15.0
 toml==0.10.2
+urllib3==1.26.2
 Werkzeug==1.0.1

@@ -3,23 +3,21 @@ from commands.chat import ChatCommand
 from commands.help import HelpCommand
 from commands.off import OffCommand
 from commands.unreg import UnregCommand
-# from commands.status import StatusCommand
 from commands.lang import LangCommand
+from commands.keyboard import KeyboardCommand
+from commands.empty import EmptyCommand
 from commands.chat_alias import ChatCommandAlias
+import messengers
 
 commands = {
-    # TODO get list of messengers dynamically
-    'vk': ChatCommandAlias,
-    'viber': ChatCommandAlias,
-    'telegram': ChatCommandAlias,
-    'discord': ChatCommandAlias,
-    # ...
+    **{messenger: ChatCommandAlias for messenger in messengers.get_available_messengers()},
     'chat': ChatCommand,
     'help': HelpCommand,
-    # 'status': StatusCommand,
     'lang': LangCommand,
     'off': OffCommand,
     'unreg': UnregCommand,
+    'keyboard': KeyboardCommand,
+    'empty': EmptyCommand,
 }
 
 

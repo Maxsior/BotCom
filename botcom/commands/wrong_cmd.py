@@ -1,7 +1,6 @@
 from commands.base import Command
 from messengers import Messenger
 from entities import Message
-import l10n
 
 
 class WrongCmdCommand(Command):
@@ -10,4 +9,4 @@ class WrongCmdCommand(Command):
 
         if sender.registered:
             messenger_from = Messenger.get_instance(sender.messenger)
-            messenger_from.send(sender.id, Message(l10n.format(sender.lang, 'UNDEFINED_CMD')))
+            messenger_from.send(sender.id, Message('MESSAGE.UNDEFINED_CMD').localize(sender.lang))

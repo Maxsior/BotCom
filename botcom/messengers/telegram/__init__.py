@@ -1,49 +1,66 @@
+import json
 import os
-from urllib.parse import urlencode
-from urllib.request import urlopen
+from dataclasses import asdict
+import requests
 from messengers import Messenger
+from entities.keyboards import Keyboard
 from entities import Message, User, CommandInfo
 
 
 class Telegram(Messenger):
     @staticmethod
-    def is_cmd(msg: Message):
-        return msg.text.startswith('/')
-
-    @staticmethod
-    def send(receiver_id, msg: Message, **kwargs):
+    def send(receiver_id, msg: Message, keyboard: Keyboard = None):
         api_url = f"https://api.telegram.org/bot{os.getenv('TELEGRAM_TOKEN')}/sendMessage?"
         query = {
             'chat_id': receiver_id,
             'text': msg.text
         }
 
-        # if 'keyboard' in kwargs:
-        #     keyboard = os.path.join(os.path.dirname(__file__), f"{kwargs['keyboard']}_keyboard.json")
-        #     with open(keyboard, encoding='utf-8') as f:
-        #         query['reply_markup'] = f.read()
+        if keyboard is not None:
+            query['reply_markup'] = Telegram.create_keyboard(keyboard)
 
-        api_url += urlencode(query)
-        return urlopen(api_url)
+        return requests.post(api_url, data=query)
+
+    @staticmethod
+    def create_keyboard(keyboard: Keyboard):
+        json_keyboard = {
+            'inline_keyboard': []
+        }
+
+        row = []
+        for button in keyboard.buttons:
+            if button:
+                row.append({
+                    "text": button.text,
+                    "callback_data": json.dumps(asdict(button.cmd))
+                })
+            else:
+                json_keyboard['inline_keyboard'].append(row)
+                row = []
+
+        return json.dumps(json_keyboard)
 
     @staticmethod
     def parse(data):
-        if 'message' in data:
-            msg = data['message']
-            name = msg['from']['first_name'] + ' ' + msg['from']['last_name']
+        if 'message' in data or 'callback_query' in data:
+            msg = data.get('message') or data.get('callback_query')
+            name = msg['from']['first_name']
+            if 'last_name' in msg['from']:
+                name += f" {msg['from']['last_name']}"
 
             user = User(
-                id=msg['chat']['id'],
+                id=msg['from']['id'],
                 name=name,
                 messenger='telegram',
-                nick=msg['from']['username'],
-                lang=msg['from']['language_code']
+                nick=msg['from'].get('username'),
+                lang=msg['from'].get('language_code')
             )
 
             return Message(
                 sender=user,
-                text=msg['text'],
-                cmd=Telegram.parse_cmd(msg)
+                text=msg.get('text', ''),
+                cmd=Telegram.parse_cmd(msg),
+                attachments=[]
             )
         else:
             return None
@@ -51,7 +68,9 @@ class Telegram(Messenger):
     @staticmethod
     def parse_cmd(msg):
         cmd = None
-        if msg['text'].startswith('/'):
+        if 'data' in msg:
+            cmd = CommandInfo(**json.loads(msg['data']))
+        elif 'text' in msg and msg['text'].startswith('/'):
             [name, *args] = msg['text'].split()
             cmd = CommandInfo(
                 name=name.replace('/', ''),

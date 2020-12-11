@@ -2,7 +2,7 @@ from commands.base import Command
 from messengers import Messenger
 from entities import Message
 from storage import Storage
-import l10n
+import entities.keyboards as keyboards
 
 
 class LangCommand(Command):
@@ -11,9 +11,17 @@ class LangCommand(Command):
         messenger = Messenger.get_instance(sender.messenger)
 
         if len(self.msg.cmd.args) == 0:
-            messenger.send(sender.id, Message(l10n.format(sender.lang, 'WRONG_ARGS')))
+            messenger.send(
+                sender.id,
+                Message('MESSAGE.WRONG_ARGS').localize(sender.lang),
+                keyboards.ConnectKeyboard(sender)
+            )
             return
 
-        lang = self.msg.cmd.args[0]
-        Storage().update(sender.key, {'lang': lang})
-        messenger.send(sender.id, Message(l10n.format(lang, 'LANG_CHANGED')))
+        sender.lang = self.msg.cmd.args[0]
+        Storage().update(sender.key, {'lang': sender.lang})
+        messenger.send(
+            sender.id,
+            Message('MESSAGE.LANG_CHANGED').localize(sender.lang),
+            keyboards.ConnectKeyboard(sender)
+        )
