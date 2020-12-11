@@ -1,55 +1,85 @@
 # BotCom
 
-### Идея: 
-Создать сервис, который избавляет от необходимости регистрации в соц. сетях.
+### Problem: 
+Did you ever had problems having accounts in many social networks and messengers?
 
-Например, если Вам нужно написать человеку в _Telegram_, а Вы зарегистрированы только _ВКонтакте_,
- и по каким-то причинам не хотите создавать аккаунт в _Telegram_, Вы можете найти бота _ВКонтакте_, 
- который свяжет Вас с ботом в _Telegram_, способным передать Ваши сообщения собеседнику.
+What do you feel when you need to switch between accounts to write to other people often?
 
-![Схема взаимодействия](https://i.imgur.com/53TaLG6.png)
+Had you ever created account in specific messenger to chat with only one receiver
+because they don't have account in other messengers?
+
+Why do you need to switch between different messengers?
+
+Why you can't have all your companions in one place?
+
+Well, there is solution for this...
+
+![Схема взаимодействия](https://maxsior.github.io/BotCom/images/new_scheme.png)
 
 ### Описание
-**BotCom** - это система ботов, которые помогут Вам общаться с пользователями в других социальных сетях.
+**BotCom** - system of bots that allows you to write from current messenger to another messengers
+without needing to create account in these another messengers.
 
-Мы не храним и не читаем Ваши переписки, все сообщения удаляются, как только достигнут адресата.
+Your messages are not stored
 
-Список доступных команд:
-- `/reg`, `/start`, `/рег`, `/регистрация` -- получить новый идентификатор
-- `/conn`, `/chat`, `/подкл`, `/подключиться`, `/чат` -- подключиться к пользователю. Существует 2 способа подключения:
-  - по UID: `/conn UID`, где `UID` -- идентификатор BotCom
-  - по внутреннему идентификтору соц. сети: `/conn ID SOCIAL`, где `SOCIAL` - социальная сеть (_vk_, _telegram_ и т.д.), `ID` - идентификатор собеседника в этой социальной сети
-- `/status`, `/статус` -- вывод информации о вашем UID и подключённых собеседниках
-- `/close`, `/off`, `/отключиться` - отключиться от собеседника
-- `/unreg`, `/del`, `/delete`, `/удалить_аккаунт` -- удалить свой аккаунт в BotCom
-- `/help`, `/помощь` -- показать справку
+List of available commands:
 
-### Пример
- Чтобы получить идентификатор (UID) в BotCom достаточно отправить ему любое \
- сообщение.
+  `/MESSENGER ID` -- connect to user `ID` from `MESSENGER`, where
+    `MESSENGER` - messenger or social network (`vk`, `telegram`, `viber` etc)
+    `ID` - identifier of friend in messenger or social network
+  Examples:
+    `/telegram superkitty`
+    `/vk 177482059`
+
+  `/off` -- disconnect from current dialog
+
+  `/lang LANGUAGE` -- change language to `LANGUAGE`
+  Example: `/lang en`
+
+  `/unreg` -- delete your BotCom account
+
+  `/help` -- print this message
+
+But you also can use messanger buttons as interface to call these commands
+without needing to write them by youself.
+
+### Example
+ To create account simply write message to bot being unregistered
+ or press `Start` button.
  
-**ВЫ**: `/reg`<br>
-**БОТ**: `Вам присвоен новый UID — СЛОВО99`
+**YOU**: `Hello i want to speak to another messenger` <br>
+**BOT**: `Hooray!
+  Your BotCom account is activated! Now you can send and receive messages!
+  BotCom helps send messages across different messengers and social networks.
+  Currently only text messages are supported for vk and telegram.
+  For more information send /help`
 
- Если Вы уже знаете UID собеседника, Вам нет необходимости отправлять дополнительные сообщения, начните работу с команды /conn
+ To speak with your friend from `MESSENGER` you can use buttons
+ or command `/MESSENGER ID`.
+ For example,
+ if your friend is in `telegram` messenger and his `ID` is `friend777`
+ you need to write `telegram friend777` command.
+ Note: your friend must be registered in BotCom too.
+ Each BotCom account from other messenger is a different account.
 
-**ВЫ**: `/conn ДРУГ1`<br>
-**БОТ**: `Ожидаем ответного подключения от ДРУГ1`
+**YOU**: `telegram friend777` <br>
+**BOT**: `Waiting for connection from friend777 from telegram`
 
- После выполнения этой команды пользователю с UID ДРУГ1 придёт сообщение:
+ After this friend777 will receive message about your request.
+ For example, we will write from `vk` having `ID` = `superkitty` 
  
-**БОТ**: `К Вам подключился пользователь СЛОВО99. Чтобы начать диалог, введите /conn СЛОВО99.`
+**BOT**: `superkitty  from vk is trying to contact you.
+  To start a conversation
+  send /vk superkitty
+  or select superkitty from vk using "Dialogs" button`
 
- Готово! Вы уже можете отправлять сообщения, но Ваш собеседник пока что не \
-будет их видеть. Для того, чтобы начать полноценный диалог Ваш собеседник \
-должен совершить ответное подключение к Вам.
+ In order to start a dialog, friend777 should send this message or use buttons
 
-**ВАШ ДРУГ**: `/conn СЛОВО99`
+**FRIEND777**: `/vk superkitty`
 
-После этого обоим собседникам придёт сообщение об успешном соединении.
+ After that you and friend777 both will receive message about successful connection
 
-**БОТ**: `Соединено с Имя Фамилия (UID)`
+**BOT**: `Connected with friend777 !`
+**BOT**: `Connected with superkitty !`
 
- Теперь сообщения, отправленные до установления взаимного подключения, будут \
-доставлены адресату, в остальном процесс не будет отличаться от привычного \
-диалога.
+ At this state all message you send will be received by your companion.
