@@ -1,7 +1,6 @@
 from commands.base import Command
 from messengers import Messenger
 from entities import Message
-import l10n
 
 
 class WrongCmdCommand(Command):
