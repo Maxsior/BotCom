@@ -26,11 +26,11 @@ We are not going to read your dialogs with bots.
 List of available commands:
 
   `/MESSENGER ID` -- connect to user `ID` from `MESSENGER`, where
-    `MESSENGER` is messenger or social network name (`vk`, `telegram`, `viber` etc)
-    `ID` is an identifier of a friend in specified messenger or social network
-  Examples:
-    `/telegram superkitty`
-    `/vk 177482059`
+  <br> `MESSENGER` is messenger or social network name (`vk`, `telegram`, `viber` etc)
+  <br> `ID` is an identifier of a friend in specified messenger or social network
+  <br> Examples:
+  <br>`/telegram superkitty`
+  <br> `/vk 177482059`
 
   `/off` -- disconnect from current dialog
 
