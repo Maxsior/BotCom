@@ -14,7 +14,7 @@ Why you can't have all your companions in one place?
 
 Well, there is solution for this...
 
-![How it works](https://maxsior.github.io/BotCom/images/new_scheme.png)
+![How it works](docs/images/new_scheme.png)
 
 ### Description
 **BotCom** is a system of bots that allows you to write from current messenger to another messengers
