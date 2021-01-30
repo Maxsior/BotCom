@@ -1,7 +1,7 @@
 import os
 import random
 import json
-from flask import abort, Response
+from fastapi import HTTPException
 import requests
 from entities import Message, User, CommandInfo
 from entities.keyboards import Keyboard
@@ -73,7 +73,7 @@ class Vk(Messenger):
                 attachments=[]  # TODO attachments
             )
         elif data_type == 'confirmation' and str(data.get('group_id')) == os.getenv('VK_GROUP'):
-            abort(Response(os.getenv('VK_CONFIRMATION')))
+            raise HTTPException(status_code=200, detail=os.getenv('VK_CONFIRMATION'))
         else:
             return None
 
